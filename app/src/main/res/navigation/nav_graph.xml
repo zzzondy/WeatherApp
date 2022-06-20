@@ -11,8 +11,29 @@
         android:label="cityWeatherFragment"
         tools:layout="@layout/fragment_city_weather">
 
+        <action
+            android:id="@+id/action_cityWeatherFragment_to_listOfCitiesFragment"
+            app:destination="@id/listOfCitiesFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/listOfCitiesFragment"
+        android:name="com.weatherapp.fragments.ListOfCitiesFragment"
+        android:label="listOfCitiesFragment"
+        tools:layout="@layout/fragment_list_of_cities">
+
+        <action
+            android:id="@+id/action_listOfCitiesFragment_to_searchCitiesFragment"
+            app:destination="@id/searchCitiesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchCitiesFragment"
+        android:name="com.weatherapp.fragments.SearchCitiesFragment"
+        android:label="searchOfCitiesFragment"
+        tools:layout="@layout/fragment_search_cities">
+
+    </fragment>
 
 
 </navigation>

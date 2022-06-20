@@ -53,7 +53,7 @@ ext {
             rx_kotlin       : "2.4.0",
             rx_binding      : "3.1.0",
             okhttp          : "4.9.0",
-            navComponent    : "1.0.0-alpha05"
+            navComponent    : "1.0.0"
     ]
 }
 
