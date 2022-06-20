@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="cityName">Voronezh</string>
+    <string name="tempNow">25C</string>
+    <string name="wind">WIND</string>
+    <string name="sunset">SUNSET</string>
+    <string name="uv_index">UV INDEX</string>
+    <string name="_7_day_forecast">7-Day Forecast</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="partly_cloudy">Partly Cloudy</string>
+    <string name="low">Low</string>
+    <string name="_6_m_s">6 m/s</string>
+    <string name="ne">NE</string>
+    <string name="humidity">HUMIDITY</string>
+    <string name="_45" translatable="false">45%</string>
+    <string name="visibility">VISIBILITY</string>
+    <string name="_15_km" translatable="false">15 KM</string>
+    <string name="precipitation">PRECIPITATION</string>
+    <string name="_0mm">0mm</string>
+</resources>
