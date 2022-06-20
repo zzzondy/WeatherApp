@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="cityName">Воронеж</string>
+    <string name="tempNow">25С</string>
+    <string name="wind">ВЕТЕР</string>
+    <string name="sunset">ЗАКАТ</string>
+    <string name="_7_day_forecast">7-ми дневный прогноз</string>
+    <string name="hourly_forecast">Почасовой прогноз</string>
+    <string name="partly_cloudy">Облачно</string>
+    <string name="uv_index">УВ ИНДЕКС</string>
+    <string name="low">Низко</string>
+    <string name="_6_m_s">6 м/с</string>
+    <string name="ne">С-В</string>
+    <string name="humidity">ВЛАЖНОСТЬ</string>
+    <string name="visibility">ВИДИМОСТЬ</string>
+    <string name="precipitation">ОСАДКИ</string>
+    <string name="_0mm">0мм</string>
+</resources>
