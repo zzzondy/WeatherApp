@@ -22,10 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "String", "BASE_WEATHER_URL", "https://devapi.qweather.com/v7/"
-            buildConfigField "String", "BASE_GEO_URL", "https://geoapi.qweather.com/v2/"
-            buildConfigField "String", "BASE_IMAGE_URL", "https://image.tmdb.org/t/p/w300"
-            buildConfigField "String", "API_KEY", "f714954b26794670b66643a8ff2c7d11"
+            buildConfigField "String", "BASE_WEATHER_URL", "\"https://devapi.qweather.com/v7/\""
+            buildConfigField "String", "BASE_GEO_URL", "\"https://geoapi.qweather.com/v2/\""
+            buildConfigField "String", "BASE_IMAGE_URL", "\"https://image.tmdb.org/t/p/w300\""
+            buildConfigField "String", "API_KEY", "\"f714954b26794670b66643a8ff2c7d11\""
         }
     }
     compileOptions {
@@ -53,7 +53,7 @@ ext {
             rx_kotlin       : "2.4.0",
             rx_binding      : "3.1.0",
             okhttp          : "4.9.0",
-            navComponent    : "1.0.0"
+            navComponent    : "1.0.0-alpha05"
     ]
 }
 
@@ -76,6 +76,7 @@ dependencies {
 
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "io.coil-kt:coil:2.1.0"
 

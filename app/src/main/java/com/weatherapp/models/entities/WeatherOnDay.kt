@@ -33,5 +33,5 @@ data class WeatherOnDay(
     val pressure: String,
     @SerialName("vis")
     val visibility: String,
-    val cloud: String?
+    val cloud: String
 )
