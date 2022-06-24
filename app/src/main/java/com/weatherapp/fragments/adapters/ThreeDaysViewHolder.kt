@@ -2,6 +2,7 @@ package com.weatherapp.fragments.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.weatherapp.R
@@ -33,16 +34,16 @@ class ThreeDaysViewHolder(private val itemBinding: ViewHolderWeatherOnDayBinding
         val calendar = Calendar.getInstance()
         val splittedDate = date.split("-").map { it.toInt() }
         calendar.set(Calendar.YEAR, splittedDate[0])
-        calendar.set(Calendar.DAY_OF_MONTH, splittedDate[1])
-        calendar.set(Calendar.MONTH, splittedDate[2])
+        calendar.set(Calendar.DAY_OF_MONTH, splittedDate[2])
+        calendar.set(Calendar.MONTH, splittedDate[1] - 1)
         return when (calendar.get(Calendar.DAY_OF_WEEK)) {
-            1 -> resourceProvider.resources.getString(R.string.monday)
-            2 -> resourceProvider.resources.getString(R.string.tuesday)
-            3 -> resourceProvider.resources.getString(R.string.wednesday)
-            4 -> resourceProvider.resources.getString(R.string.thursday)
-            5 -> resourceProvider.resources.getString(R.string.friday)
-            6 -> resourceProvider.resources.getString(R.string.saturday)
-            else -> resourceProvider.resources.getString(R.string.sunday)
+            1 -> resourceProvider.resources.getString(R.string.sunday)
+            2 -> resourceProvider.resources.getString(R.string.monday)
+            3 -> resourceProvider.resources.getString(R.string.tuesday)
+            4 -> resourceProvider.resources.getString(R.string.wednesday)
+            5 -> resourceProvider.resources.getString(R.string.thursday)
+            6 -> resourceProvider.resources.getString(R.string.friday)
+            else -> resourceProvider.resources.getString(R.string.saturday)
         }
     }
 }
