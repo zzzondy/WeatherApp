@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentCityWeatherBinding
+import com.weatherapp.providers.ResourceProvider
 
 class CityWeatherFragment : Fragment() {
 
-    private lateinit var viewModel: CityWeatherViewModel
+    private var viewModel: CityWeatherViewModel? = null
     private var binding: FragmentCityWeatherBinding? = null
+    private var resourceProvider: ResourceProvider? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,12 +24,86 @@ class CityWeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        resourceProvider = ResourceProvider(requireContext())
         binding = FragmentCityWeatherBinding.bind(view)
+        viewModel = CityWeatherViewModel("Россошь", resourceProvider!!)
+        setObservers()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        viewModel?.onClear()
+        viewModel = null
+        resourceProvider = null
+    }
+
+    private fun setObservers() {
+        viewModel?.cityNameLiveData?.observe(this.viewLifecycleOwner, this::updateCityName)
+        viewModel?.tempNowLiveData?.observe(this.viewLifecycleOwner, this::updateTempNow)
+        viewModel?.maxTempLiveData?.observe(this.viewLifecycleOwner, this::updateTempMax)
+        viewModel?.minTempLiveData?.observe(this.viewLifecycleOwner, this::updateTempMin)
+        viewModel?.uvIndexLiveData?.observe(this.viewLifecycleOwner, this::updateUvIndex)
+        viewModel?.uvIndexTextLiveData?.observe(this.viewLifecycleOwner, this::updateUvIndexText)
+        viewModel?.weatherTextLiveData?.observe(this.viewLifecycleOwner, this::updateWeatherText)
+        viewModel?.windSpeedLiveData?.observe(this.viewLifecycleOwner, this::updateWindSpeed)
+        viewModel?.windDirectionLiveData?.observe(this.viewLifecycleOwner, this::updateWindDirection)
+        viewModel?.sunsetLiveData?.observe(this.viewLifecycleOwner, this::updateSunset)
+        viewModel?.humidityLiveData?.observe(this.viewLifecycleOwner, this::updateHumidity)
+        viewModel?.visibilityLiveData?.observe(this.viewLifecycleOwner, this::updateVisibility)
+        viewModel?.precipitationLiveData?.observe(this.viewLifecycleOwner, this::updatePrecipitation)
+    }
+
+    private fun updateCityName(name: String) {
+        binding?.cityName?.text = name
+    }
+
+    private fun updateTempNow(temp: String) {
+        binding?.tempNow?.text = "$temp${getString(R.string.celsius)}"
+    }
+
+    private fun updateWeatherText(newText: String) {
+        binding?.textWeather?.text = newText
+    }
+
+    private fun updateTempMax(temp: String) {
+        binding?.tempMax?.text = "${getString(R.string.max)}${temp}${getString(R.string.celsius)}"
+    }
+
+    private fun updateTempMin(temp: String) {
+        binding?.tempMin?.text = "${getString(R.string.min)}$temp${getString(R.string.celsius)}"
+    }
+
+    private fun updateUvIndex(uvIndex: String) {
+        binding?.uvIndex?.text = uvIndex
+    }
+
+    private fun updateUvIndexText(uvIndexText: String) {
+        binding?.uvIndexText?.text = uvIndexText
+    }
+
+    private fun updateWindSpeed(speed: String) {
+        binding?.windSpeed?.text = "$speed${getString(R.string.meter_per_seconds)}"
+    }
+
+    private fun updateWindDirection(direction: String) {
+        binding?.windDirection?.text = direction
+    }
+
+    private fun updateSunset(sunset: String) {
+        binding?.sunsetTime?.text = sunset
+    }
+
+    private fun updateHumidity(humidity: String) {
+        binding?.humidity?.text = "$humidity%"
+    }
+
+    private fun updateVisibility(visibility: String) {
+        binding?.visibility?.text = "$visibility${getString(R.string.kilometers)}"
+    }
+
+    private fun updatePrecipitation(precipitation: String) {
+        binding?.precipitation?.text = "$precipitation${getString(R.string.millimeters)}"
     }
 
     companion object {

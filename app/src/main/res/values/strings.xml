@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="cityName">Voronezh</string>
-    <string name="tempNow">25C</string>
+    <string name="celsius" translatable="false">°C</string>
     <string name="wind">WIND</string>
     <string name="sunset">SUNSET</string>
     <string name="uv_index">UV INDEX</string>
@@ -9,6 +9,10 @@
     <string name="hourly_forecast">Hourly Forecast</string>
     <string name="partly_cloudy">Partly Cloudy</string>
     <string name="low">Low</string>
+    <string name="middle">Middle</string>
+    <string name="high">High</string>
+    <string name="very_high">Very high</string>
+    <string name="extremal">Extremal</string>
     <string name="_6_m_s">6 m/s</string>
     <string name="ne">NE</string>
     <string name="humidity">HUMIDITY</string>
@@ -17,4 +21,10 @@
     <string name="_15_km" translatable="false">15 KM</string>
     <string name="precipitation">PRECIPITATION</string>
     <string name="_0mm">0mm</string>
+    <string name="none" translatable="false">--</string>
+    <string name="meter_per_seconds">m/s</string>
+    <string name="max">H</string>
+    <string name="min">M</string>
+    <string name="kilometers">KM</string>
+    <string name="millimeters">mm</string>
 </resources>

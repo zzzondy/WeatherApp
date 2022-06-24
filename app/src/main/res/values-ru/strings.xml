@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="cityName">Воронеж</string>
-    <string name="tempNow">25С</string>
     <string name="wind">ВЕТЕР</string>
     <string name="sunset">ЗАКАТ</string>
     <string name="_7_day_forecast">7-ми дневный прогноз</string>
@@ -16,4 +15,13 @@
     <string name="visibility">ВИДИМОСТЬ</string>
     <string name="precipitation">ОСАДКИ</string>
     <string name="_0mm">0мм</string>
+    <string name="meter_per_seconds">м/с</string>
+    <string name="max" translatable="false">В</string>
+    <string name="min" translatable="false">М</string>
+    <string name="middle">Средний</string>
+    <string name="high">Выскокий</string>
+    <string name="very_high">Очень высокий</string>
+    <string name="extremal">Экстремальный</string>
+    <string name="kilometers">КМ</string>
+    <string name="millimeters">мм</string>
 </resources>

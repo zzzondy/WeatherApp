@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cityName">Voronezh</string>
-    <string name="tempNow">25C</string>
     <string name="wind">WIND</string>
     <string name="sunset">SUNSET</string>
     <string name="_7_day_forecast">7-Day Forecast</string>
@@ -16,4 +15,5 @@
     <string name="_15_km">15 KM</string>
     <string name="precipitation">PRECIPITATION</string>
     <string name="_0mm">0mm</string>
+    <string name="none">--</string>
 </resources>

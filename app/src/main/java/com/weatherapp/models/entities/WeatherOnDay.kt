@@ -18,7 +18,7 @@ data class WeatherOnDay(
     val textDay: String,
     val iconNight: String,
     val textNight: String,
-    val wing360Day: String,
+    val wind360Day: String,
     val windDirDay: String,
     val windScaleDay: String,
     val windSpeedDay: String,
