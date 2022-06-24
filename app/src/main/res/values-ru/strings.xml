@@ -24,4 +24,13 @@
     <string name="extremal">Экстремальный</string>
     <string name="kilometers">КМ</string>
     <string name="millimeters">мм</string>
+    <string name="min_temp">Мин</string>
+    <string name="max_temp">Макс</string>
+    <string name="monday">Понедельник</string>
+    <string name="tuesday">Вторник</string>
+    <string name="wednesday">Среда</string>
+    <string name="thursday">Четверг</string>
+    <string name="friday">Пятница</string>
+    <string name="saturday">Суббота</string>
+    <string name="sunday">Воскресенье</string>
 </resources>

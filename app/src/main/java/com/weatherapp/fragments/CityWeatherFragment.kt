@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentCityWeatherBinding
+import com.weatherapp.fragments.adapters.ThreeDaysAdapter
+import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
 
 class CityWeatherFragment : Fragment() {
@@ -14,6 +17,7 @@ class CityWeatherFragment : Fragment() {
     private var viewModel: CityWeatherViewModel? = null
     private var binding: FragmentCityWeatherBinding? = null
     private var resourceProvider: ResourceProvider? = null
+    private var daysAdapter: ThreeDaysAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +32,7 @@ class CityWeatherFragment : Fragment() {
         binding = FragmentCityWeatherBinding.bind(view)
         viewModel = CityWeatherViewModel("Россошь", resourceProvider!!)
         setObservers()
+        setAdapters()
     }
 
     override fun onDestroyView() {
@@ -36,6 +41,7 @@ class CityWeatherFragment : Fragment() {
         viewModel?.onClear()
         viewModel = null
         resourceProvider = null
+        daysAdapter = null
     }
 
     private fun setObservers() {
@@ -52,6 +58,12 @@ class CityWeatherFragment : Fragment() {
         viewModel?.humidityLiveData?.observe(this.viewLifecycleOwner, this::updateHumidity)
         viewModel?.visibilityLiveData?.observe(this.viewLifecycleOwner, this::updateVisibility)
         viewModel?.precipitationLiveData?.observe(this.viewLifecycleOwner, this::updatePrecipitation)
+        viewModel?.days3ForecastLiveData?.observe(this.viewLifecycleOwner, this::updateWeatherDaysForecast)
+    }
+
+    private fun setAdapters() {
+        daysAdapter = ThreeDaysAdapter(resourceProvider!!)
+        binding?.rv10DayForecast?.adapter = daysAdapter
     }
 
     private fun updateCityName(name: String) {
@@ -67,11 +79,11 @@ class CityWeatherFragment : Fragment() {
     }
 
     private fun updateTempMax(temp: String) {
-        binding?.tempMax?.text = "${getString(R.string.max)}${temp}${getString(R.string.celsius)}"
+        binding?.tempMax?.text = "${getString(R.string.max)}: ${temp}${getString(R.string.celsius)}"
     }
 
     private fun updateTempMin(temp: String) {
-        binding?.tempMin?.text = "${getString(R.string.min)}$temp${getString(R.string.celsius)}"
+        binding?.tempMin?.text = "${getString(R.string.min)}: $temp${getString(R.string.celsius)}"
     }
 
     private fun updateUvIndex(uvIndex: String) {
@@ -83,7 +95,7 @@ class CityWeatherFragment : Fragment() {
     }
 
     private fun updateWindSpeed(speed: String) {
-        binding?.windSpeed?.text = "$speed${getString(R.string.meter_per_seconds)}"
+        binding?.windSpeed?.text = "$speed ${getString(R.string.meter_per_seconds)}"
     }
 
     private fun updateWindDirection(direction: String) {
@@ -95,15 +107,19 @@ class CityWeatherFragment : Fragment() {
     }
 
     private fun updateHumidity(humidity: String) {
-        binding?.humidity?.text = "$humidity%"
+        binding?.humidity?.text = "$humidity %"
     }
 
     private fun updateVisibility(visibility: String) {
-        binding?.visibility?.text = "$visibility${getString(R.string.kilometers)}"
+        binding?.visibility?.text = "$visibility ${getString(R.string.kilometers)}"
     }
 
     private fun updatePrecipitation(precipitation: String) {
-        binding?.precipitation?.text = "$precipitation${getString(R.string.millimeters)}"
+        binding?.precipitation?.text = "$precipitation ${getString(R.string.millimeters)}"
+    }
+
+    private fun updateWeatherDaysForecast(forecast: List<WeatherOnDay>) {
+        daysAdapter?.submitList(forecast)
     }
 
     companion object {
