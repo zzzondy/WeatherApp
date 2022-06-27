@@ -76,7 +76,7 @@ class CityWeatherViewModel(private val cityName: String, resourceProvider: Resou
 
     init {
         mutableCityNameLiveData.value = cityName
-        getWeatherForCity()
+        getWeatherForCity(cityName)
     }
 
     private fun getWeatherForNow(location: String) {
@@ -120,7 +120,7 @@ class CityWeatherViewModel(private val cityName: String, resourceProvider: Resou
             .addTo(subscriptions)
     }
 
-    private fun getWeatherForCity() {
+    fun getWeatherForCity(cityName: String) {
         weatherApiModule.cityService.getCity(cityName, language, BuildConfig.API_KEY)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

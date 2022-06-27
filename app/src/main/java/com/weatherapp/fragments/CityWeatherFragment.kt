@@ -1,14 +1,17 @@
 package com.weatherapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.Navigation
+import com.google.gson.Gson
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentCityWeatherBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
+import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
 
@@ -30,9 +33,15 @@ class CityWeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         resourceProvider = ResourceProvider(requireContext())
         binding = FragmentCityWeatherBinding.bind(view)
-        viewModel = CityWeatherViewModel("Россошь", resourceProvider!!)
+        val city = arguments?.getString(ARG_CITY, null)
+        viewModel = if (city != null) {
+            CityWeatherViewModel(fromJson(city).cityName, resourceProvider!!)
+        } else {
+            CityWeatherViewModel("Россошь", resourceProvider!!)
+        }
         setObservers()
         setAdapters()
+        setClickListeners()
     }
 
     override fun onDestroyView() {
@@ -42,6 +51,17 @@ class CityWeatherFragment : Fragment() {
         viewModel = null
         resourceProvider = null
         daysAdapter = null
+    }
+
+    private fun setClickListeners() {
+        binding?.openListOfCitiesButton?.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.action_cityWeatherFragment_to_listOfCitiesFragment)
+        }
+
+        binding?.swipeRefreshLayout?.setOnRefreshListener {
+            viewModel?.getWeatherForCity("Россошь")
+            binding?.swipeRefreshLayout?.isRefreshing = false
+        }
     }
 
     private fun setObservers() {
@@ -122,8 +142,13 @@ class CityWeatherFragment : Fragment() {
         daysAdapter?.submitList(forecast)
     }
 
+    private fun fromJson(city: String): DatabaseCity {
+        return Gson().fromJson(city, DatabaseCity::class.java)
+    }
+
     companion object {
         fun newInstance() = CityWeatherFragment()
+        const val ARG_CITY = "city"
     }
 
 
