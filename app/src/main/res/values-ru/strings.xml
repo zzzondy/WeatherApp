@@ -38,4 +38,5 @@
     <string name="empty_result">Ничего не найдено по вашему запросу.</string>
     <string name="city_placeholder">Введите запрос в поле выше.</string>
     <string name="error_unknown_on_download">Непредвиденная ошибка при попытке обработать запрос.</string>
+    <string name="delete">Удалить</string>
 </resources>

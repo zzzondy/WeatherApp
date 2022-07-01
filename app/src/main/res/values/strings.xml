@@ -41,4 +41,5 @@
     <string name="city_placeholder">Start typing in a search bar to find a city.</string>
     <string name="empty_result">No results matching your query</string>
     <string name="error_unknown_on_download">Unexpected error while trying to fetch cities!</string>
+    <string name="delete">Delete</string>
 </resources>

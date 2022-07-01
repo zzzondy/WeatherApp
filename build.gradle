@@ -3,6 +3,9 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-serialization:1.4.20"
     }
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 plugins {
     id 'com.android.application' version '7.2.0' apply false

@@ -11,4 +11,5 @@
     <color name="gray">#40B9B9B9</color>
     <color name="textGray">#C93E3C3C</color>
     <color name="backgroundGray">#2B2828</color>
+    <color name="deleteRed">#FFE53935</color>
 </resources>
