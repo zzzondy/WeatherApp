@@ -8,10 +8,15 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
 import com.weatherapp.R
 import com.weatherapp.database.CityWeatherRepository
@@ -31,6 +36,11 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener {
     private var cityWeatherRepository: CityWeatherRepository? = null
     private var cityWeatherAdapter: CityWeatherAdapter? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,6 +50,10 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        view.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
         resourceProvider = ResourceProvider(requireContext())
         binding = FragmentListOfCitiesBinding.bind(view)
         cityWeatherRepository = CityWeatherRepository(requireContext())
@@ -66,6 +80,10 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener {
         binding?.root?.setOnRefreshListener {
             viewModel?.getCities()
             binding?.root?.isRefreshing = false
+        }
+
+        binding?.openSearchCities?.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.action_listOfCitiesFragment_to_searchCitiesFragment)
         }
     }
 
@@ -108,10 +126,14 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener {
         cityWeatherAdapter?.submitList(newCities)
     }
 
-    override fun openCityWeather(city: DatabaseCity) {
+    override fun openCityWeather(city: DatabaseCity, originView: View) {
+        exitTransition = MaterialElevationScale(false)
+        reenterTransition = MaterialElevationScale(true)
+        val extras = FragmentNavigatorExtras(originView to "cityWeatherFragment")
         Navigation.findNavController(requireView()).navigate(
             R.id.cityWeatherFragment,
-            bundleOf(CityWeatherFragment.ARG_CITY to toJson(city))
+            bundleOf(CityWeatherFragment.ARG_CITY to toJson(city)),
+            null, extras
         )
     }
 

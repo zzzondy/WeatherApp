@@ -19,7 +19,7 @@ class CityWeatherItemAnimator: DefaultItemAnimator() {
     ): Boolean {
         dispatchMoveStarting(holder)
         val newHolder = holder as CityWeatherViewHolder
-        ObjectAnimator.ofFloat(newHolder.itemView.findViewById(R.id.constraionLayoutCity), "y", fromY.toFloat(), toY.toFloat())
+        ObjectAnimator.ofFloat(newHolder.itemView.findViewById(R.id.constraintLayoutCity), "y", fromY.toFloat(), toY.toFloat())
             .apply {
                 duration = 300
                 start()

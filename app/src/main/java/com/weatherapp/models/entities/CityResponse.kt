@@ -1,5 +1,6 @@
 package com.weatherapp.models.entities
 
+import com.weatherapp.fragments.states.SearchResult
 import kotlinx.serialization.Serializable
 
 @Serializable

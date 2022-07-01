@@ -34,4 +34,8 @@
     <string name="saturday">Суббота</string>
     <string name="sunday">Воскресенье</string>
     <string name="weather">Погода</string>
+    <string name="errorText">Невозможно загрузить погоду. Пожалуйста, проверьте подключение к интернету.</string>
+    <string name="empty_result">Ничего не найдено по вашему запросу.</string>
+    <string name="city_placeholder">Введите запрос в поле выше.</string>
+    <string name="error_unknown_on_download">Непредвиденная ошибка при попытке обработать запрос.</string>
 </resources>

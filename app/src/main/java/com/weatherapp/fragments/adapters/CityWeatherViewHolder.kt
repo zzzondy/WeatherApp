@@ -26,7 +26,7 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
         cityWeatherCallback: CityWeatherListener
     ) {
         itemBinding.root.setOnClickListener {
-            cityWeatherCallback.openCityWeather(city)
+            cityWeatherCallback.openCityWeather(city, itemBinding.root)
         }
         val weatherApiModule = WeatherApiModule()
         itemBinding.nameCity.text = city.cityName

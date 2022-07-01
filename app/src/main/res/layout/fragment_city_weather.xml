@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/clearSky"
+    android:transitionName="cityWeatherFragment"
     tools:context=".fragments.CityWeatherFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/clearSky">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             tools:context=".fragments.CityWeatherFragment">
 
@@ -121,7 +121,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_hourlyForecast" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_10DayForecast"
+                android:id="@+id/rv_7DayForecast"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -130,7 +130,6 @@
                 android:background="@drawable/shape"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_7DayForecast" />
 
@@ -156,8 +155,9 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/shape"
                 android:orientation="vertical"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_10DayForecast">
+                app:layout_constraintTop_toBottomOf="@+id/rv_7DayForecast">
 
                 <TextView
                     android:id="@+id/tv_UVIndex"
@@ -196,7 +196,7 @@
                 android:background="@drawable/shape"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_10DayForecast">
+                app:layout_constraintTop_toBottomOf="@+id/rv_7DayForecast">
 
                 <TextView
                     android:id="@+id/tv_sunset"
@@ -229,7 +229,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toStartOf="@+id/sunsetLinearLayout"
                 app:layout_constraintStart_toEndOf="@+id/uvIndexLinearLayout"
-                app:layout_constraintTop_toBottomOf="@+id/rv_10DayForecast">
+                app:layout_constraintTop_toBottomOf="@+id/rv_7DayForecast">
 
                 <TextView
                     android:id="@+id/tv_wind"
@@ -355,26 +355,35 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/openListOfCitiesButton"
+                android:id="@+id/openPreviousScreen"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/list" />
-
-            <ImageView
-                android:id="@+id/openWeatherOnLocationNutton"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
+                android:src="@drawable/back_arrow"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/location" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/errorText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/errorText"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

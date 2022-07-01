@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.3335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic100.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_100.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_1003.xml" value="0.3335" />
@@ -13,7 +14,7 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__01_fill.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/shape.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.3582427536231884" />
-        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.33" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.25" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_list_of_cities.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_search_cities.xml" value="0.2701502732240437" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/view_holder_city.xml" value="0.2701502732240437" />

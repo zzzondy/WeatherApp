@@ -3,18 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/cityWeatherFragment">
+    app:startDestination="@id/listOfCitiesFragment">
 
     <fragment
         android:id="@+id/cityWeatherFragment"
         android:name="com.weatherapp.fragments.CityWeatherFragment"
         android:label="cityWeatherFragment"
-        tools:layout="@layout/fragment_city_weather">
-
-        <action
-            android:id="@+id/action_cityWeatherFragment_to_listOfCitiesFragment"
-            app:destination="@id/listOfCitiesFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_city_weather"/>
 
     <fragment
         android:id="@+id/listOfCitiesFragment"
@@ -25,6 +20,9 @@
         <action
             android:id="@+id/action_listOfCitiesFragment_to_searchCitiesFragment"
             app:destination="@id/searchCitiesFragment" />
+        <action
+            android:id="@+id/action_listOfCitiesFragment_to_cityWeatherFragment"
+            app:destination="@id/cityWeatherFragment" />
     </fragment>
 
     <fragment

@@ -16,4 +16,5 @@
     <string name="precipitation">PRECIPITATION</string>
     <string name="_0mm">0mm</string>
     <string name="none">--</string>
+    <string name="errorText">Can not load data. Please, check your internet connection.</string>
 </resources>
