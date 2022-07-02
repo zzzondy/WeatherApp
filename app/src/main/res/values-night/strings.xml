@@ -17,4 +17,5 @@
     <string name="_0mm">0mm</string>
     <string name="none">--</string>
     <string name="errorText">Can not load data. Please, check your internet connection.</string>
+    <string name="add">Add</string>
 </resources>

@@ -1,12 +1,13 @@
 package com.weatherapp.fragments
 
+import android.provider.ContactsContract
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.weatherapp.BuildConfig
 import com.weatherapp.R
+import com.weatherapp.database.CityWeatherRepository
 import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.WeatherOnDay
@@ -20,11 +21,11 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
 
-class CityWeatherViewModel(city: DatabaseCity, resourceProvider: ResourceProvider) :
+class CityWeatherViewModel(private val city: DatabaseCity, resourceProvider: ResourceProvider, fromSearch: Boolean) :
     ViewModel() {
 
     private val weatherApiModule = WeatherApiModule.getInstance()
-    private val context = resourceProvider.context
+    private var cityWeatherRepository: CityWeatherRepository? = null
 
     private val resources = resourceProvider.resources
     private val language = resourceProvider.language
@@ -82,6 +83,9 @@ class CityWeatherViewModel(city: DatabaseCity, resourceProvider: ResourceProvide
     init {
         mutableCityNameLiveData.value = city.cityName
         getWeatherForCity(city.cityId)
+        if (fromSearch) {
+            cityWeatherRepository = CityWeatherRepository(resourceProvider.context)
+        }
     }
 
     private fun getWeatherForNow(location: String) {
@@ -132,16 +136,22 @@ class CityWeatherViewModel(city: DatabaseCity, resourceProvider: ResourceProvide
     fun getWeatherForCity(cityId: String) {
         getWeatherForNow(cityId)
         getWeatherOnDays(cityId)
-
     }
 
-    private fun showExceptionToast(e: Throwable) {
-        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-        Log.println(Log.ASSERT, "exception", e.toString())
+    fun addCity() {
+        subscriptions.add(
+            cityWeatherRepository?.getNumberOfCities()
+                ?.subscribeOn(Schedulers.io())
+                ?.flatMap { cityWeatherRepository?.addNewCity(DatabaseCity(city.cityName, city.cityId, it))
+                    ?.subscribeOn(Schedulers.io())}
+                ?.subscribeBy()!!
+        )
     }
 
     fun onClear() {
         subscriptions.dispose()
+        cityWeatherRepository?.onClear()
+        cityWeatherRepository = null
     }
 
 

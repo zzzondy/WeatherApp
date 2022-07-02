@@ -15,4 +15,10 @@ interface CityWeatherDao {
 
     @Query("DELETE FROM city_weather WHERE city_id = :id")
     fun deleteCityWeatherById(id: String)
+
+    @Query("UPDATE city_weather SET id_at_list = :idAtList WHERE city_id = :id")
+    fun updateCity(id: String, idAtList: Int)
+
+    @Query("SELECT COUNT(id) FROM city_weather")
+    fun getNumberOfCities(): Int
 }

@@ -47,8 +47,12 @@ class CityWeatherFragment : Fragment() {
         resourceProvider = ResourceProvider(requireContext())
         binding = FragmentCityWeatherBinding.bind(view)
         val city = requireArguments().getString(ARG_CITY)
+        val fromSearch = requireArguments().getBoolean(ARG_FROM_SEARCH)
         viewModel =
-            CityWeatherViewModel(fromJson(city!!), resourceProvider!!)
+            CityWeatherViewModel(fromJson(city!!), resourceProvider!!, fromSearch)
+        if (fromSearch) {
+            setButtonAdd()
+        }
         setObservers()
         setAdapters()
         setClickListeners()
@@ -61,6 +65,15 @@ class CityWeatherFragment : Fragment() {
         viewModel = null
         resourceProvider = null
         daysAdapter = null
+    }
+
+    private fun setButtonAdd() {
+        binding?.addButton?.apply {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                viewModel?.addCity()
+            }
+        }
     }
 
     private fun setClickListeners() {
@@ -202,8 +215,8 @@ class CityWeatherFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = CityWeatherFragment()
         const val ARG_CITY = "city"
+        const val ARG_FROM_SEARCH = "from_search"
     }
 
 

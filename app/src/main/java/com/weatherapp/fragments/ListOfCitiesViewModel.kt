@@ -1,5 +1,6 @@
 package com.weatherapp.fragments
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,7 +33,8 @@ class ListOfCitiesViewModel(
             .observeOn(Schedulers.io())
             .map { it.map { cityWeatherRepository.toCity(it) } }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { mutableListOfCitiesLiveData.value = it })
+            .subscribeBy(onSuccess = { mutableListOfCitiesLiveData.value = it.sortedBy { it.idAtList }},
+            onError = {Log.e("error", it.toString())})
             .addTo(subscriptions)
     }
 
@@ -40,15 +42,14 @@ class ListOfCitiesViewModel(
         subscriptions.add(Single.fromCallable { cityWeatherRepository.deleteById(city.cityId) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { getCities() }))
+            .subscribeBy(onSuccess = { getCities() }, onError = {Log.e("error", it.toString())}))
     }
 
-    fun addCity(city: DatabaseCity) {
+    fun updatePosition(city: DatabaseCity, newIdAtList: Int) {
         subscriptions.add(
-            cityWeatherRepository.addNewCity(city)
+            Single.fromCallable { cityWeatherRepository.updateCity(city.cityId, newIdAtList) }
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { getCities() })
+                .subscribeBy(onError = {Log.e("error", it.toString())})
         )
     }
 

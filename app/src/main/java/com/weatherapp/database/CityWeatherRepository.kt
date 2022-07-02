@@ -22,12 +22,14 @@ class CityWeatherRepository(applicationContext: Context) {
 
     private fun toEntity(city: DatabaseCity) = CityWeatherEntity(
         cityName = city.cityName,
-        cityId = city.cityId
+        cityId = city.cityId,
+        idAtList = city.idAtList
     )
 
     fun toCity(entity: CityWeatherEntity) = DatabaseCity(
         cityName = entity.cityName,
-        cityId = entity.cityId
+        cityId = entity.cityId,
+        idAtList = entity.idAtList
     )
 
     fun getAllCities(): Single<List<CityWeatherEntity>> = database.cityWeatherDao.getAll()
@@ -40,6 +42,15 @@ class CityWeatherRepository(applicationContext: Context) {
 
     fun deleteById(id: String) {
         database.cityWeatherDao.deleteCityWeatherById(id)
+    }
+
+    fun updateCity(id: String, idAtList: Int) {
+        database.cityWeatherDao.updateCity(id, idAtList)
+        Log.println(Log.ASSERT, "update", "yes")
+    }
+
+    fun getNumberOfCities(): Single<Int> {
+        return Single.fromCallable { database.cityWeatherDao.getNumberOfCities() }
     }
 
     fun onClear() {

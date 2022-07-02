@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.weatherapp.databinding.ViewHolderCityBinding
 import com.weatherapp.models.entities.City
+import com.weatherapp.navigation.CityWeatherListener
 
-class SearchCityAdapter : ListAdapter<City, SearchCityViewHolder>(SearchCityDiffCallback()) {
+class SearchCityAdapter(private val cityWeatherCallback: CityWeatherListener) : ListAdapter<City, SearchCityViewHolder>(SearchCityDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchCityViewHolder {
         val itemBinding =
             ViewHolderCityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -16,7 +17,7 @@ class SearchCityAdapter : ListAdapter<City, SearchCityViewHolder>(SearchCityDiff
 
     override fun onBindViewHolder(holder: SearchCityViewHolder, position: Int) {
         val city = getItem(position)
-        holder.bind(city)
+        holder.bind(city, cityWeatherCallback)
     }
 }
 

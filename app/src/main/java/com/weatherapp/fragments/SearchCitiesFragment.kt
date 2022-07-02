@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
+import com.google.gson.Gson
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentSearchCitiesBinding
@@ -60,9 +62,10 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
     }
 
     private fun setAdapters() {
-        val dividerItemDecoration = DividerItemDecorator(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
+        val dividerItemDecoration =
+            DividerItemDecorator(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
         binding.rvCities.addItemDecoration(dividerItemDecoration)
-        searchCityAdapter = SearchCityAdapter()
+        searchCityAdapter = SearchCityAdapter(this)
         binding.rvCities.adapter = searchCityAdapter
     }
 
@@ -71,7 +74,7 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
     }
 
     private fun handleSearchResult(result: SearchResult) {
-        when(result) {
+        when (result) {
             is ValidResult -> {
                 binding.cityPlaceholder.visibility = View.GONE
                 binding.rvCities.visibility = View.VISIBLE
@@ -134,8 +137,18 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
     }
 
     override fun openCityWeather(city: DatabaseCity, originView: View) {
-
+        Navigation.findNavController(originView).navigate(
+            R.id.cityWeatherFragment,
+            bundleOf(
+                CityWeatherFragment.ARG_FROM_SEARCH to true,
+                CityWeatherFragment.ARG_CITY to toJson(city))
+        )
     }
+
+    private fun toJson(city: DatabaseCity): String? {
+        return Gson().toJson(city)
+    }
+
 
     companion object {
         fun newInstance() = SearchCitiesFragment()

@@ -16,5 +16,8 @@ data class CityWeatherEntity(
     val cityName: String,
 
     @ColumnInfo(name = CityWeatherDatabaseContract.CityWeather.COLUMN_NAME_CITY_ID)
-    val cityId: String
+    val cityId: String,
+
+    @ColumnInfo(name = CityWeatherDatabaseContract.CityWeather.COLUMN_NAME_ID_AT_LIST)
+    var idAtList: Int?
 )
