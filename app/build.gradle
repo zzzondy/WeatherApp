@@ -26,7 +26,6 @@ android {
         debug {
             buildConfigField "String", "BASE_WEATHER_URL", "\"https://devapi.qweather.com/v7/\""
             buildConfigField "String", "BASE_GEO_URL", "\"https://geoapi.qweather.com/v2/\""
-            buildConfigField "String", "BASE_IMAGE_URL", "\"https://image.tmdb.org/t/p/w300\""
             buildConfigField "String", "API_KEY", "\"f714954b26794670b66643a8ff2c7d11\""
         }
     }

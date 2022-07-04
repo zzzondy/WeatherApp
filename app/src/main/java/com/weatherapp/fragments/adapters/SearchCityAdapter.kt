@@ -18,6 +18,7 @@ class SearchCityAdapter(private val cityWeatherCallback: CityWeatherListener) : 
     override fun onBindViewHolder(holder: SearchCityViewHolder, position: Int) {
         val city = getItem(position)
         holder.bind(city, cityWeatherCallback)
+        holder.itemView.transitionName = getItem(position).id
     }
 }
 

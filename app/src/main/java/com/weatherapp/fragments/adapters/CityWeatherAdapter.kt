@@ -8,10 +8,16 @@ import com.weatherapp.databinding.ViewHolderCityWeatherBinding
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.navigation.CityWeatherListener
 import com.weatherapp.providers.ResourceProvider
+import com.weatherapp.receivers.NetworkChangeListener
+import com.weatherapp.receivers.NetworkStateReceiver
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
-class CityWeatherAdapter(private val resourceProvider: ResourceProvider, private val cityWeatherCallBack: CityWeatherListener) :
+class CityWeatherAdapter(
+    private val resourceProvider: ResourceProvider,
+    private val cityWeatherCallBack: CityWeatherListener,
+    private val networkChangeListener: NetworkChangeListener
+) :
     ListAdapter<DatabaseCity, CityWeatherViewHolder>(CityWeatherDiffCallback()) {
 
     private val subscriptions = CompositeDisposable()
@@ -25,7 +31,8 @@ class CityWeatherAdapter(private val resourceProvider: ResourceProvider, private
 
     override fun onBindViewHolder(holder: CityWeatherViewHolder, position: Int) {
         val city = getItem(position)
-        holder.bind(city, resourceProvider, subscriptions, cityWeatherCallBack)
+        holder.bind(city, resourceProvider, subscriptions, cityWeatherCallBack, networkChangeListener)
+        holder.itemView.transitionName = getItem(position).cityId
     }
 
     fun onItemsUpdated(newCities: List<DatabaseCity>) {
@@ -43,7 +50,6 @@ class CityWeatherAdapter(private val resourceProvider: ResourceProvider, private
                 Collections.swap(items, i, i - 1)
             }
         }
-        println(items)
         notifyItemMoved(fromPosition, toPosition)
     }
 

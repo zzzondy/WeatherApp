@@ -12,6 +12,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.weatherapp.R
@@ -20,6 +24,7 @@ import com.weatherapp.fragments.adapters.DividerItemDecorator
 import com.weatherapp.fragments.adapters.SearchCityAdapter
 import com.weatherapp.fragments.states.*
 import com.weatherapp.models.entities.DatabaseCity
+import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.navigation.CityWeatherListener
 import com.weatherapp.providers.ResourceProvider
 
@@ -31,6 +36,16 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
 
     private var _binding: FragmentSearchCitiesBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
+            duration = 300
+        }
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+            duration = 300
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +82,14 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
         binding.rvCities.addItemDecoration(dividerItemDecoration)
         searchCityAdapter = SearchCityAdapter(this)
         binding.rvCities.adapter = searchCityAdapter
+        binding.rvCities.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    hideKeyboard()
+                }
+            }
+        })
     }
 
     private fun setObservers() {
@@ -136,22 +159,24 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    override fun openCityWeather(city: DatabaseCity, originView: View) {
+    override fun openCityWeather(
+        city: DatabaseCity,
+        originView: View,
+        cityWeather: SimpleWeatherForCity?
+    ) {
+        exitTransition = MaterialElevationScale(false)
+        reenterTransition = MaterialElevationScale(true)
+        val extras = FragmentNavigatorExtras(originView to "cityWeatherFragment")
         Navigation.findNavController(originView).navigate(
             R.id.cityWeatherFragment,
             bundleOf(
                 CityWeatherFragment.ARG_FROM_SEARCH to true,
-                CityWeatherFragment.ARG_CITY to toJson(city))
+                CityWeatherFragment.ARG_CITY to toJson(city)
+            ), null, extras
         )
     }
 
     private fun toJson(city: DatabaseCity): String? {
         return Gson().toJson(city)
     }
-
-
-    companion object {
-        fun newInstance() = SearchCitiesFragment()
-    }
-
 }

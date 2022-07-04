@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
 import com.weatherapp.R
@@ -16,6 +17,7 @@ import com.weatherapp.databinding.FragmentCityWeatherBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
 import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.models.entities.DatabaseCity
+import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
 
@@ -28,11 +30,14 @@ class CityWeatherFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform()
+        sharedElementEnterTransition = MaterialContainerTransform(requireContext(), true)
             .apply {
                 scrimColor = Color.TRANSPARENT
+                duration = 300
             }
-
+        returnTransition = MaterialElevationScale(false).apply {
+            duration = 300
+        }
     }
 
     override fun onCreateView(
@@ -46,12 +51,18 @@ class CityWeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         resourceProvider = ResourceProvider(requireContext())
         binding = FragmentCityWeatherBinding.bind(view)
-        val city = requireArguments().getString(ARG_CITY)
+        val weatherForCity = fromJson(requireArguments().getString(ARG_CITY_WEATHER))
+        val city = fromJson(requireArguments().getString(ARG_CITY)!!)
         val fromSearch = requireArguments().getBoolean(ARG_FROM_SEARCH)
-        viewModel =
-            CityWeatherViewModel(fromJson(city!!), resourceProvider!!, fromSearch)
-        if (fromSearch) {
-            setButtonAdd()
+        viewModel = if (weatherForCity != null) {
+            CityWeatherViewModel(
+                resourceProvider!!,
+                fromSearch,
+                city,
+                weatherForCity
+            )
+        } else {
+            CityWeatherViewModel(resourceProvider!!, fromSearch, city)
         }
         setObservers()
         setAdapters()
@@ -67,11 +78,14 @@ class CityWeatherFragment : Fragment() {
         daysAdapter = null
     }
 
-    private fun setButtonAdd() {
-        binding?.addButton?.apply {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                viewModel?.addCity()
+    private fun setButtonAdd(status: Boolean) {
+        if (status) {
+            binding?.addButton?.apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    viewModel?.addCity()
+                    Navigation.findNavController(it).popBackStack()
+                }
             }
         }
     }
@@ -117,10 +131,11 @@ class CityWeatherFragment : Fragment() {
             this.viewLifecycleOwner,
             this::updateWeatherDaysForecast
         )
+        viewModel?.addButtonLiveData?.observe(this.viewLifecycleOwner, this::setButtonAdd)
     }
 
     private fun handleResult(result: ResultState) {
-        when(result) {
+        when (result) {
             ResultState.ERROR -> {
                 binding?.errorText?.visibility = View.VISIBLE
                 hideAllViews()
@@ -137,8 +152,6 @@ class CityWeatherFragment : Fragment() {
         binding?.textWeather?.visibility = View.GONE
         binding?.tempMin?.visibility = View.GONE
         binding?.tempMax?.visibility = View.GONE
-        binding?.tvHourlyForecast?.visibility = View.GONE
-        binding?.rvHourlyForecast?.visibility = View.GONE
         binding?.tv7DayForecast?.visibility = View.GONE
         binding?.rv7DayForecast?.visibility = View.GONE
         binding?.uvIndexLinearLayout?.visibility = View.GONE
@@ -210,11 +223,16 @@ class CityWeatherFragment : Fragment() {
         daysAdapter?.submitList(forecast)
     }
 
+    private fun fromJson(city: String?): SimpleWeatherForCity? {
+        return Gson().fromJson(city, SimpleWeatherForCity::class.java)
+    }
+
     private fun fromJson(city: String): DatabaseCity {
         return Gson().fromJson(city, DatabaseCity::class.java)
     }
 
     companion object {
+        const val ARG_CITY_WEATHER = "city_weather"
         const val ARG_CITY = "city"
         const val ARG_FROM_SEARCH = "from_search"
     }

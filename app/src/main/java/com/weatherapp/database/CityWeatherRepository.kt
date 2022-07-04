@@ -53,6 +53,8 @@ class CityWeatherRepository(applicationContext: Context) {
         return Single.fromCallable { database.cityWeatherDao.getNumberOfCities() }
     }
 
+    fun getCityById(id: String) = database.cityWeatherDao.getCityById(id)
+
     fun onClear() {
         subscriptions.dispose()
     }

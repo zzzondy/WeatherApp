@@ -1,16 +1,12 @@
 package com.weatherapp.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.weatherapp.BuildConfig
 import com.weatherapp.fragments.states.*
-import com.weatherapp.models.entities.CityResponse
 import com.weatherapp.models.network.WeatherApiModule
 import com.weatherapp.providers.ResourceProvider
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -47,7 +43,7 @@ internal class SearchCitiesViewModel(resourceProvider: ResourceProvider) :
             .subscribeBy(
                 onNext = { searchResult ->
                     mutableResultOutput.value = searchResult
-                }
+                }, onError = {}
             )
             .addTo(subscriptions)
 
