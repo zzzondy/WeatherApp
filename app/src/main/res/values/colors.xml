@@ -7,9 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="clearSky">#8ECCFE</color>
+    <color name="clearSky">#87CEEB</color>
     <color name="gray">#40B9B9B9</color>
     <color name="textGray">#C93E3C3C</color>
     <color name="backgroundGray">#2B2828</color>
     <color name="deleteRed">#FFE53935</color>
+    <color name="night">#102C54</color>
+    <color name="evening">#C35831</color>
+    <color name="morning">#7bb7ab</color>
+    <color name="rainy">#606E8C</color>
 </resources>

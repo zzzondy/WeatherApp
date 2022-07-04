@@ -36,6 +36,16 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
     ) {
         val weatherApiModule = WeatherApiModule.getInstance()
         itemBinding.nameCity.text = city.cityName
+        val cityCalendar = Calendar.getInstance(TimeZone.getTimeZone(city.timezone))
+        val cityHour = cityCalendar.get(Calendar.HOUR_OF_DAY)
+        itemBinding.timeCity.text = "${cityHour}:${cityCalendar.get(Calendar.MINUTE)}"
+        when (cityHour) {
+            in 0..3 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.night))
+            in 22..23 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.night))
+            in 4..10 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.morning))
+            in 11..17 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.clearSky))
+            in 18..21 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.evening))
+        }
         val cityFromPreferences = resourceProvider.getFromPref(city.cityId)
         val passedTime = resourceProvider.getUpdateTime()
         if (cityFromPreferences != null && passedTime != null && (Calendar.getInstance().time.time - passedTime.time) / (60 * 1000) <= 5) {
@@ -83,7 +93,15 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
                         )
                     }
 
-                }, onError = { networkChangeListener.setNetworkReceiver() })
+                }, onError = {
+                    networkChangeListener.setNetworkReceiver()
+                    itemBinding.root.setOnClickListener {
+                        cityWeatherCallback.openCityWeather(
+                            city,
+                            itemBinding.root
+                        )
+                    }
+                })
                 .addTo(subscriptions)
         }
 

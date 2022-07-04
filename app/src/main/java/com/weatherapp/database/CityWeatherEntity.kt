@@ -18,6 +18,9 @@ data class CityWeatherEntity(
     @ColumnInfo(name = CityWeatherDatabaseContract.CityWeather.COLUMN_NAME_CITY_ID)
     val cityId: String,
 
+    @ColumnInfo(name = CityWeatherDatabaseContract.CityWeather.COLUMN_NAME_TIMEZONE)
+    val timezone: String,
+
     @ColumnInfo(name = CityWeatherDatabaseContract.CityWeather.COLUMN_NAME_ID_AT_LIST)
     var idAtList: Int?
 )

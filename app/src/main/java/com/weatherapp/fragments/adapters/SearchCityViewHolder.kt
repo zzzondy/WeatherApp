@@ -12,7 +12,7 @@ class SearchCityViewHolder(private val itemBinding: ViewHolderCityBinding) :
         fun bind(city: City, cityWeatherCallback: CityWeatherListener) {
             itemBinding.cityNameText.text = city.name
             itemBinding.root.setOnClickListener {
-                cityWeatherCallback.openCityWeather(DatabaseCity(city.name, city.id, null), it)
+                cityWeatherCallback.openCityWeather(DatabaseCity(city.name, city.id, city.timezone, null), it)
             }
         }
 }

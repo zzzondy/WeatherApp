@@ -43,4 +43,5 @@
     <string name="error_unknown_on_download">Unexpected error while trying to fetch cities!</string>
     <string name="delete">Delete</string>
     <string name="add">Add</string>
+    <string name="today">Today</string>
 </resources>

@@ -36,6 +36,9 @@ class ThreeDaysViewHolder(private val itemBinding: ViewHolderWeatherOnDayBinding
         calendar.set(Calendar.YEAR, splittedDate[0])
         calendar.set(Calendar.DAY_OF_MONTH, splittedDate[2])
         calendar.set(Calendar.MONTH, splittedDate[1] - 1)
+        val calendarNow = Calendar.getInstance()
+        if (calendarNow.get(Calendar.DAY_OF_WEEK) == calendar.get(Calendar.DAY_OF_WEEK))
+            return resourceProvider.resources.getString(R.string.today)
         return when (calendar.get(Calendar.DAY_OF_WEEK)) {
             1 -> resourceProvider.resources.getString(R.string.sunday)
             2 -> resourceProvider.resources.getString(R.string.monday)

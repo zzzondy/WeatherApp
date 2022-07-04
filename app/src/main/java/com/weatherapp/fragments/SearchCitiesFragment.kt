@@ -132,6 +132,7 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
 
     private fun setOnClickListeners() {
         binding.backArrow.setOnClickListener {
+            hideKeyboard()
             Navigation.findNavController(it).popBackStack()
         }
 

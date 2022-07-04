@@ -23,12 +23,14 @@ class CityWeatherRepository(applicationContext: Context) {
     private fun toEntity(city: DatabaseCity) = CityWeatherEntity(
         cityName = city.cityName,
         cityId = city.cityId,
+        timezone = city.timezone,
         idAtList = city.idAtList
     )
 
     fun toCity(entity: CityWeatherEntity) = DatabaseCity(
         cityName = entity.cityName,
         cityId = entity.cityId,
+        timezone = entity.timezone,
         idAtList = entity.idAtList
     )
 

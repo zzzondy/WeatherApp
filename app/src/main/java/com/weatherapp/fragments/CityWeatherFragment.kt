@@ -132,6 +132,7 @@ class CityWeatherFragment : Fragment() {
             this::updateWeatherDaysForecast
         )
         viewModel?.addButtonLiveData?.observe(this.viewLifecycleOwner, this::setButtonAdd)
+        viewModel?.timeLiveData?.observe(this.viewLifecycleOwner, this::updateColorBackground)
     }
 
     private fun handleResult(result: ResultState) {
@@ -169,6 +170,16 @@ class CityWeatherFragment : Fragment() {
 
     private fun updateCityName(name: String) {
         binding?.cityName?.text = name
+    }
+
+    private fun updateColorBackground(hour: Int) {
+        when (hour) {
+            in 0..3 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.night))
+            in 22..23 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.night))
+            in 4..10 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.morning))
+            in 11..17 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.clearSky))
+            in 18..21 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.evening))
+        }
     }
 
     private fun updateTempNow(temp: String) {

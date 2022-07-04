@@ -11,14 +11,16 @@ import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
-import com.weatherapp.models.entities.WeatherOnHour
 import com.weatherapp.models.network.WeatherApiModule
 import com.weatherapp.providers.ResourceProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import kotlin.coroutines.cancellation.CancellationException
 
 
 class CityWeatherViewModel(
@@ -39,6 +41,9 @@ class CityWeatherViewModel(
 
     private val mutableAddButtonLiveData = MutableLiveData(false)
     val addButtonLiveData: LiveData<Boolean> get() = mutableAddButtonLiveData
+
+    private val mutableTimeLiveData = MutableLiveData<Int>()
+    val timeLiveData: LiveData<Int> get() = mutableTimeLiveData
 
     private val mutableResultLiveData = MutableLiveData<ResultState>()
     val resultLiveData: LiveData<ResultState> get() = mutableResultLiveData
@@ -87,6 +92,8 @@ class CityWeatherViewModel(
 
     init {
         mutableCityNameLiveData.value = city.cityName
+        mutableTimeLiveData.value =
+            Calendar.getInstance(TimeZone.getTimeZone(city.timezone)).get(Calendar.HOUR_OF_DAY)
         if (weatherForCity == null)
             getWeatherForCity(city.cityId)
         else {
@@ -98,54 +105,45 @@ class CityWeatherViewModel(
         }
     }
 
-    private fun getWeatherForNow(location: String) {
-        weatherApiModule.weatherService.getWeatherNow(location, language, BuildConfig.API_KEY)
-            .map { it.now }
+    fun getWeatherForCity(cityId: String) {
+        weatherApiModule.weatherService.getWeatherNow(cityId, language, BuildConfig.API_KEY)
             .subscribeOn(Schedulers.io())
+            .zipWith(
+                weatherApiModule.weatherService.getWeatherOnDays(
+                    cityId,
+                    language,
+                    BuildConfig.API_KEY
+                )
+                    .subscribeOn(Schedulers.io())
+            )
+            .observeOn(Schedulers.io())
+            .map { it.first.now to it.second.daily }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { weatherNow ->
+            .subscribeBy(onSuccess = { pair ->
                 mutableResultLiveData.value = ResultState.SUCCESS
-                mutableWeatherTextLiveData.value = weatherNow.text
-                mutableTempNowLiveData.value = weatherNow.temp
-                mutablePrecipitationLiveData.value = weatherNow.precipitation
-                mutableVisibilityLiveData.value = weatherNow.visibility
-                mutableWindDirectionLiveData.value = weatherNow.windDir
-                mutableWindSpeedLiveData.value = weatherNow.windSpeed
-                mutableHumidityLiveData.value = weatherNow.humidity
-            }, onError = {
-                mutableResultLiveData.value = ResultState.ERROR
-            })
-            .addTo(subscriptions)
-    }
-
-    private fun getWeatherOnDays(location: String) {
-        weatherApiModule.weatherService.getWeatherOnDays(location, language, BuildConfig.API_KEY)
-            .map { it.daily }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { weatherOnDays ->
-                mutableResultLiveData.value = ResultState.SUCCESS
-                mutable3DaysForecastLiveData.value = weatherOnDays
-                mutableSunsetLiveData.value = weatherOnDays[0].sunset
-                mutableUvIndexLiveData.value = weatherOnDays[0].uvIndex
-                mutableMaxTempLiveData.value = weatherOnDays[0].tempMax
-                mutableMinTempLiveData.value = weatherOnDays[0].tempMin
-                mutableUvIndexTextLiveData.value = when (weatherOnDays[0].uvIndex.toInt()) {
+                mutable3DaysForecastLiveData.value = pair.second
+                mutableSunsetLiveData.value = pair.second[0].sunset
+                mutableUvIndexLiveData.value = pair.second[0].uvIndex
+                mutableMaxTempLiveData.value = pair.second[0].tempMax
+                mutableMinTempLiveData.value = pair.second[0].tempMin
+                mutableUvIndexTextLiveData.value = when (pair.second[0].uvIndex.toInt()) {
                     in 0..2 -> resources.getString(R.string.low)
                     in 3..5 -> resources.getString(R.string.middle)
                     in 6..7 -> resources.getString(R.string.high)
                     in 8..10 -> resources.getString(R.string.very_high)
                     else -> resources.getString(R.string.extremal)
                 }
-            }, onError = {
-                mutableResultLiveData.value = ResultState.ERROR
-            })
-            .addTo(subscriptions)
-    }
 
-    fun getWeatherForCity(cityId: String) {
-        getWeatherForNow(cityId)
-        getWeatherOnDays(cityId)
+                mutableWeatherTextLiveData.value = pair.first.text
+                mutableTempNowLiveData.value = pair.first.temp
+                mutablePrecipitationLiveData.value = pair.first.precipitation
+                mutableVisibilityLiveData.value = pair.first.visibility
+                mutableWindDirectionLiveData.value = pair.first.windDir
+                mutableWindSpeedLiveData.value = pair.first.windSpeed
+                mutableHumidityLiveData.value = pair.first.humidity
+            },
+                onError = { mutableResultLiveData.value = ResultState.ERROR })
+            .addTo(subscriptions)
     }
 
     fun addCity() {
@@ -153,7 +151,14 @@ class CityWeatherViewModel(
             cityWeatherRepository?.getNumberOfCities()
                 ?.subscribeOn(Schedulers.io())
                 ?.flatMap {
-                    cityWeatherRepository?.addNewCity(DatabaseCity(city.cityName, city.cityId, it))
+                    cityWeatherRepository?.addNewCity(
+                        DatabaseCity(
+                            city.cityName,
+                            city.cityId,
+                            city.timezone,
+                            it
+                        )
+                    )
                         ?.subscribeOn(Schedulers.io())
                 }
                 ?.subscribeBy()!!
@@ -168,7 +173,7 @@ class CityWeatherViewModel(
                 mutableAddButtonLiveData.value = false
                 Log.println(Log.ASSERT, "city here", "yes")
             },
-                onComplete = {mutableAddButtonLiveData.value = true}, onError = {})
+                onComplete = { mutableAddButtonLiveData.value = true }, onError = {})
             ?.addTo(subscriptions)
     }
 

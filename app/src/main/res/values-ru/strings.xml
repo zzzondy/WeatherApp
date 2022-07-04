@@ -40,4 +40,5 @@
     <string name="error_unknown_on_download">Непредвиденная ошибка при попытке обработать запрос.</string>
     <string name="delete">Удалить</string>
     <string name="add">Добавить</string>
+    <string name="today">Сегодня</string>
 </resources>
