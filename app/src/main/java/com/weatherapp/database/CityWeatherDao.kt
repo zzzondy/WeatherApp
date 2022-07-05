@@ -3,7 +3,6 @@ package com.weatherapp.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.weatherapp.models.entities.DatabaseCity
 import io.reactivex.Maybe
 import io.reactivex.Single
 

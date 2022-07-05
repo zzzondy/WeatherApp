@@ -12,8 +12,13 @@
     <color name="textGray">#C93E3C3C</color>
     <color name="backgroundGray">#2B2828</color>
     <color name="deleteRed">#FFE53935</color>
-    <color name="night">#102C54</color>
-    <color name="evening">#C35831</color>
-    <color name="morning">#7bb7ab</color>
+    <color name="night_blue">#102C54</color>
+    <color name="night_violet">#320B35</color>
+    <color name="evening_orange">#FF7538</color>
+    <color name="evening_blue">#1560BD</color>
+    <color name="morning_cyan">#7bb7ab</color>
+    <color name="morning_yellow">#FFA618</color>
+    <color name="noon_dark_blue">#00538A</color>
+    <color name="noon_light_blue">#87CEEB</color>
     <color name="rainy">#606E8C</color>
 </resources>

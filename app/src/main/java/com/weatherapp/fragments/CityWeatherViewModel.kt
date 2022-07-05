@@ -20,7 +20,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import java.util.*
-import kotlin.coroutines.cancellation.CancellationException
 
 
 class CityWeatherViewModel(

@@ -6,6 +6,7 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/delete.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/evening_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic100.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_100.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_1003.xml" value="0.3335" />
@@ -13,6 +14,9 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_1010.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__00.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__01_fill.xml" value="0.3335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/night_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/noon_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/shape.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.3582427536231884" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.25" />

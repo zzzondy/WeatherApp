@@ -9,7 +9,6 @@ import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.navigation.CityWeatherListener
 import com.weatherapp.providers.ResourceProvider
 import com.weatherapp.receivers.NetworkChangeListener
-import com.weatherapp.receivers.NetworkStateReceiver
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 

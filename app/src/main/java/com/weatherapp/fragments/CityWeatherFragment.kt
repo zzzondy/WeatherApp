@@ -2,7 +2,6 @@ package com.weatherapp.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +9,12 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
-import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentCityWeatherBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
 import com.weatherapp.fragments.states.ResultState
+import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
@@ -174,11 +173,11 @@ class CityWeatherFragment : Fragment() {
 
     private fun updateColorBackground(hour: Int) {
         when (hour) {
-            in 0..3 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.night))
-            in 22..23 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.night))
-            in 4..10 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.morning))
-            in 11..17 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.clearSky))
-            in 18..21 -> binding?.root?.setBackgroundColor(resources.getColor(R.color.evening))
+            in 0..3 -> binding?.root?.background = getDrawable("night_gradient", resourceProvider!!)
+            in 22..23 -> binding?.root?.background = getDrawable("night_gradient", resourceProvider!!)
+            in 4..10 -> binding?.root?.background = getDrawable("morning_gradient", resourceProvider!!)
+            in 11..17 -> binding?.root?.background = getDrawable("noon_gradient", resourceProvider!!)
+            in 18..21 -> binding?.root?.background = getDrawable("evening_gradient", resourceProvider!!)
         }
     }
 

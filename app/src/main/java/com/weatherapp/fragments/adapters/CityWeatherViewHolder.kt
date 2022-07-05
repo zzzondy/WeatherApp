@@ -1,7 +1,7 @@
 package com.weatherapp.fragments.adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
+import com.weatherapp.fragments.utils.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.weatherapp.BuildConfig
 import com.weatherapp.R
@@ -21,7 +21,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import java.util.*
-import kotlin.coroutines.cancellation.CancellationException
 
 class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBinding) :
     RecyclerView.ViewHolder(itemBinding.root) {
@@ -40,11 +39,11 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
         val cityHour = cityCalendar.get(Calendar.HOUR_OF_DAY)
         itemBinding.timeCity.text = "${cityHour}:${cityCalendar.get(Calendar.MINUTE)}"
         when (cityHour) {
-            in 0..3 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.night))
-            in 22..23 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.night))
-            in 4..10 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.morning))
-            in 11..17 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.clearSky))
-            in 18..21 -> itemBinding.root.setBackgroundColor(resourceProvider.resources.getColor(R.color.evening))
+            in 0..3 -> itemBinding.root.background = getDrawable("night_gradient", resourceProvider)
+            in 22..23 -> itemBinding.root.background = getDrawable("night_gradient", resourceProvider)
+            in 4..10 -> itemBinding.root.background = getDrawable("morning_gradient", resourceProvider)
+            in 11..17 -> itemBinding.root.background = getDrawable("noon_gradient", resourceProvider)
+            in 18..21 -> itemBinding.root.background = getDrawable("evening_gradient", resourceProvider)
         }
         val cityFromPreferences = resourceProvider.getFromPref(city.cityId)
         val passedTime = resourceProvider.getUpdateTime()

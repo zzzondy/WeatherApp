@@ -3,17 +3,8 @@ package com.weatherapp.database
 import android.content.Context
 import android.util.Log
 import com.weatherapp.models.entities.DatabaseCity
-import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class CityWeatherRepository(applicationContext: Context) {
     private val database = CityWeatherDatabase.create(applicationContext)

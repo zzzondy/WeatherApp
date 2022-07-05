@@ -4,21 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.weatherapp.BuildConfig
 import com.weatherapp.database.CityWeatherRepository
 import com.weatherapp.models.entities.DatabaseCity
-import com.weatherapp.models.entities.SimpleWeatherForCity
-import com.weatherapp.models.network.WeatherApiModule
-import com.weatherapp.providers.ResourceProvider
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
-import kotlin.properties.Delegates
 
 class ListOfCitiesViewModel(
     private val cityWeatherRepository: CityWeatherRepository

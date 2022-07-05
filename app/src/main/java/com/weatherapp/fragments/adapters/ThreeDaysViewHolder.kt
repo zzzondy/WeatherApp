@@ -1,12 +1,11 @@
 package com.weatherapp.fragments.adapters
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.weatherapp.R
 import com.weatherapp.databinding.ViewHolderWeatherOnDayBinding
+import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
 import java.util.*
@@ -21,13 +20,6 @@ class ThreeDaysViewHolder(private val itemBinding: ViewHolderWeatherOnDayBinding
             "${resourceProvider.resources.getString(R.string.max_temp)}: ${weatherForDay.tempMax}"
         itemBinding.dayTempMin.text =
             "${resourceProvider.resources.getString(R.string.min_temp)}: ${weatherForDay.tempMin}"
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private fun getDrawable(name: String, resourceProvider: ResourceProvider): Drawable {
-        val resourceId =
-            resourceProvider.resources.getIdentifier(name, "drawable", resourceProvider.packageName)
-        return resourceProvider.resources.getDrawable(resourceId)
     }
 
     private fun getWeekDayByDate(date: String, resourceProvider: ResourceProvider): String {
