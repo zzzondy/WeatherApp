@@ -1,6 +1,7 @@
 package com.weatherapp.fragments
 
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
@@ -26,8 +27,10 @@ import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.navigation.CityWeatherListener
 import com.weatherapp.providers.ResourceProvider
+import com.weatherapp.receivers.NetworkChangeListener
+import com.weatherapp.receivers.NetworkStateReceiver
 
-class SearchCitiesFragment : Fragment(), CityWeatherListener {
+class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListener {
 
     private var viewModel: SearchCitiesViewModel? = null
     private var resourceProvider: ResourceProvider? = null
@@ -35,6 +38,8 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
 
     private var _binding: FragmentSearchCitiesBinding? = null
     private val binding get() = _binding!!
+
+    private var networkStateReceiver: NetworkStateReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +80,12 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
         viewModel = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.unregisterReceiver(networkStateReceiver)
+        networkStateReceiver = null
+    }
+
     private fun setAdapters() {
         val dividerItemDecoration =
             DividerItemDecorator(ContextCompat.getDrawable(requireContext(), R.drawable.divider)!!)
@@ -93,6 +104,7 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
 
     private fun setObservers() {
         viewModel?.resultOutput?.observe(this.viewLifecycleOwner, this::handleSearchResult)
+        viewModel?.searchStateOutput?.observe(this.viewLifecycleOwner, this::handleSearchState)
     }
 
     private fun handleSearchResult(result: SearchResult) {
@@ -107,6 +119,7 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
                 binding.cityPlaceholder.visibility = View.VISIBLE
                 binding.rvCities.visibility = View.GONE
                 binding.cityPlaceholder.setText(R.string.errorText)
+                setNetworkReceiver()
             }
             is EmptyResult -> {
                 searchCityAdapter.submitList(emptyList())
@@ -126,6 +139,13 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
                 binding.cityPlaceholder.visibility = View.VISIBLE
                 binding.cityPlaceholder.setText(R.string.error_unknown_on_download)
             }
+        }
+    }
+
+    private fun handleSearchState(state: SearchState) {
+        when (state) {
+            SearchState.LOADING -> binding.searchProgress.visibility = View.VISIBLE
+            SearchState.READY -> binding.searchProgress.visibility = View.GONE
         }
     }
 
@@ -174,6 +194,23 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener {
                 CityWeatherFragment.ARG_CITY to toJson(city)
             ), null, extras
         )
+    }
+
+    override fun onNetworkChanged(status: Boolean) {
+        binding.queryLine.textChanges()
+            .map { text -> text.toString() }
+            .distinctUntilChanged()
+            .subscribe(viewModel?.queryInput!!)
+    }
+
+    override fun setNetworkReceiver() {
+        if (networkStateReceiver == null) {
+            networkStateReceiver = NetworkStateReceiver.getInstance(this)
+            activity?.registerReceiver(
+                networkStateReceiver,
+                IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+            )
+        }
     }
 
     private fun toJson(city: DatabaseCity): String? {

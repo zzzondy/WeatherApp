@@ -4,7 +4,7 @@
         android:type="linear"
         android:startColor="@color/morning_yellow"
         android:endColor="@color/morning_cyan"
-        android:angle="90"/>
+        android:angle="45"/>
     <corners
         android:radius="0dp"/>
 

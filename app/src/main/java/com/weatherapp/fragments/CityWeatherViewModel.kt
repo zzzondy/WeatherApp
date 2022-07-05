@@ -1,6 +1,5 @@
 package com.weatherapp.fragments
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -170,7 +169,6 @@ class CityWeatherViewModel(
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeBy(onSuccess = {
                 mutableAddButtonLiveData.value = false
-                Log.println(Log.ASSERT, "city here", "yes")
             },
                 onComplete = { mutableAddButtonLiveData.value = true }, onError = {})
             ?.addTo(subscriptions)

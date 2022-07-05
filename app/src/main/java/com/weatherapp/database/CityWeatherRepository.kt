@@ -1,7 +1,6 @@
 package com.weatherapp.database
 
 import android.content.Context
-import android.util.Log
 import com.weatherapp.models.entities.DatabaseCity
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -39,7 +38,6 @@ class CityWeatherRepository(applicationContext: Context) {
 
     fun updateCity(id: String, idAtList: Int) {
         database.cityWeatherDao.updateCity(id, idAtList)
-        Log.println(Log.ASSERT, "update", "yes")
     }
 
     fun getNumberOfCities(): Single<Int> {

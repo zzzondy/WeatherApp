@@ -37,16 +37,27 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
         itemBinding.nameCity.text = city.cityName
         val cityCalendar = Calendar.getInstance(TimeZone.getTimeZone(city.timezone))
         val cityHour = cityCalendar.get(Calendar.HOUR_OF_DAY)
-        itemBinding.timeCity.text = "${cityHour}:${cityCalendar.get(Calendar.MINUTE)}"
+
+        if (cityCalendar.get(Calendar.MINUTE) in 0..9)
+            itemBinding.timeCity.text = "${cityHour}:0${cityCalendar.get(Calendar.MINUTE)}"
+        else
+            itemBinding.timeCity.text = "${cityHour}:${cityCalendar.get(Calendar.MINUTE)}"
+
         when (cityHour) {
             in 0..3 -> itemBinding.root.background = getDrawable("night_gradient", resourceProvider)
-            in 22..23 -> itemBinding.root.background = getDrawable("night_gradient", resourceProvider)
-            in 4..10 -> itemBinding.root.background = getDrawable("morning_gradient", resourceProvider)
-            in 11..17 -> itemBinding.root.background = getDrawable("noon_gradient", resourceProvider)
-            in 18..21 -> itemBinding.root.background = getDrawable("evening_gradient", resourceProvider)
+            in 22..23 -> itemBinding.root.background =
+                getDrawable("night_gradient", resourceProvider)
+            in 4..10 -> itemBinding.root.background =
+                getDrawable("morning_gradient", resourceProvider)
+            in 11..17 -> itemBinding.root.background =
+                getDrawable("noon_gradient", resourceProvider)
+            in 18..21 -> itemBinding.root.background =
+                getDrawable("evening_gradient", resourceProvider)
         }
+
         val cityFromPreferences = resourceProvider.getFromPref(city.cityId)
         val passedTime = resourceProvider.getUpdateTime()
+
         if (cityFromPreferences != null && passedTime != null && (Calendar.getInstance().time.time - passedTime.time) / (60 * 1000) <= 5) {
             itemBinding.weatherTemp.text =
                 "${cityFromPreferences.tempNow} ${resourceProvider.resources.getString(R.string.celsius)}"
@@ -55,6 +66,10 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
                 "${resourceProvider.resources.getString(R.string.min)}: ${cityFromPreferences.tempMin}"
             itemBinding.maxTemp.text =
                 "${resourceProvider.resources.getString(R.string.max)}: ${cityFromPreferences.tempMax}"
+            if (cityFromPreferences.precipitation.toFloat() > 1 && cityFromPreferences.precipitation.toFloat() < 10)
+                itemBinding.root.background = getDrawable("light_rain_gradient", resourceProvider)
+            else if (cityFromPreferences.precipitation.toFloat() > 10)
+                itemBinding.root.background = getDrawable("heavy_rain_gradient", resourceProvider)
             itemBinding.root.setOnClickListener {
                 cityWeatherCallback.openCityWeather(city, itemBinding.root, cityFromPreferences)
             }

@@ -4,7 +4,7 @@
         android:type="linear"
         android:startColor="@color/night_blue"
         android:endColor="@color/night_violet"
-        android:angle="90"/>
+        android:angle="45"/>
     <corners
         android:radius="0dp"/>
 
