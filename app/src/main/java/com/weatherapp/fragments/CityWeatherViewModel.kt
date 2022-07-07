@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import com.weatherapp.BuildConfig
 import com.weatherapp.R
 import com.weatherapp.database.CityWeatherRepository
+import com.weatherapp.fragments.states.BackgroundState
 import com.weatherapp.fragments.states.ResultState
+import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.models.network.WeatherApiModule
 import com.weatherapp.providers.ResourceProvider
+import com.weatherapp.receivers.NetworkChangeListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -24,6 +27,7 @@ import java.util.*
 class CityWeatherViewModel(
     resourceProvider: ResourceProvider,
     fromSearch: Boolean,
+    private val networkChangeListener: NetworkChangeListener,
     private val city: DatabaseCity,
     private val weatherForCity: SimpleWeatherForCity? = null,
 ) :
@@ -40,8 +44,8 @@ class CityWeatherViewModel(
     private val mutableAddButtonLiveData = MutableLiveData(false)
     val addButtonLiveData: LiveData<Boolean> get() = mutableAddButtonLiveData
 
-    private val mutableTimeLiveData = MutableLiveData<Int>()
-    val timeLiveData: LiveData<Int> get() = mutableTimeLiveData
+    private val mutableBackgroundLiveData = MutableLiveData<BackgroundState>()
+    val backgroundLiveData: LiveData<BackgroundState> get() = mutableBackgroundLiveData
 
     private val mutableResultLiveData = MutableLiveData<ResultState>()
     val resultLiveData: LiveData<ResultState> get() = mutableResultLiveData
@@ -90,10 +94,17 @@ class CityWeatherViewModel(
 
     init {
         mutableCityNameLiveData.value = city.cityName
-        mutableTimeLiveData.value =
-            Calendar.getInstance(TimeZone.getTimeZone(city.timezone)).get(Calendar.HOUR_OF_DAY)
+        mutableBackgroundLiveData.value =
+            when (Calendar.getInstance(TimeZone.getTimeZone(city.timezone))
+                .get(Calendar.HOUR_OF_DAY)) {
+                in 0..3 -> BackgroundState.NIGHT
+                in 22..23 -> BackgroundState.NIGHT
+                in 4..10 -> BackgroundState.MORNING
+                in 11..17 -> BackgroundState.NOON
+                else -> BackgroundState.EVENING
+            }
         if (weatherForCity == null)
-            getWeatherForCity(city.cityId)
+            getWeatherForCity()
         else {
             updateDataFromPassedWeather()
         }
@@ -103,7 +114,7 @@ class CityWeatherViewModel(
         }
     }
 
-    fun getWeatherForCity(cityId: String) {
+    fun getWeatherForCity(cityId: String = city.cityId) {
         weatherApiModule.weatherService.getWeatherNow(cityId, language, BuildConfig.API_KEY)
             .subscribeOn(Schedulers.io())
             .zipWith(
@@ -135,12 +146,19 @@ class CityWeatherViewModel(
                 mutableWeatherTextLiveData.value = pair.first.text
                 mutableTempNowLiveData.value = pair.first.temp
                 mutablePrecipitationLiveData.value = pair.first.precipitation
+                if (pair.first.precipitation.toFloat() in 0.1..2.0)
+                    mutableBackgroundLiveData.value = BackgroundState.LIGHT_RAIN
+                else if (pair.first.precipitation.toFloat() > 2)
+                    mutableBackgroundLiveData.value = BackgroundState.HEAVY_RAIN
                 mutableVisibilityLiveData.value = pair.first.visibility
                 mutableWindDirectionLiveData.value = pair.first.windDir
                 mutableWindSpeedLiveData.value = pair.first.windSpeed
                 mutableHumidityLiveData.value = pair.first.humidity
             },
-                onError = { mutableResultLiveData.value = ResultState.ERROR })
+                onError = {
+                    mutableResultLiveData.value = ResultState.ERROR
+                    networkChangeListener.setNetworkReceiver()
+                })
             .addTo(subscriptions)
     }
 
@@ -187,7 +205,11 @@ class CityWeatherViewModel(
         mutableUvIndexLiveData.value = weatherForCity?.uvIndex
         mutableMaxTempLiveData.value = weatherForCity?.tempMax
         mutableMinTempLiveData.value = weatherForCity?.tempMin
-        mutableUvIndexTextLiveData.value = when (weatherForCity?.uvIndex?.toInt()) {
+        if (weatherForCity?.precipitation?.toFloat()!! in 0.1..2.0)
+            mutableBackgroundLiveData.value = BackgroundState.LIGHT_RAIN
+        else if (weatherForCity.precipitation.toFloat() > 2)
+            mutableBackgroundLiveData.value = BackgroundState.HEAVY_RAIN
+        mutableUvIndexTextLiveData.value = when (weatherForCity.uvIndex.toInt()) {
             in 0..2 -> resources.getString(R.string.low)
             in 3..5 -> resources.getString(R.string.middle)
             in 6..7 -> resources.getString(R.string.high)

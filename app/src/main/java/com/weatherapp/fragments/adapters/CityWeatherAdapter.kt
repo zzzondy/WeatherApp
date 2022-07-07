@@ -25,7 +25,7 @@ class CityWeatherAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityWeatherViewHolder {
         val itemBinding =
             ViewHolderCityWeatherBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CityWeatherViewHolder((itemBinding))
+        return CityWeatherViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: CityWeatherViewHolder, position: Int) {
@@ -33,6 +33,7 @@ class CityWeatherAdapter(
         holder.bind(city, resourceProvider, subscriptions, cityWeatherCallBack, networkChangeListener)
         holder.itemView.transitionName = getItem(position).cityId
     }
+
 
     fun onItemsUpdated(newCities: List<DatabaseCity>) {
         submitList(newCities)

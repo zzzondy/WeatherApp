@@ -1,7 +1,9 @@
 package com.weatherapp.fragments
 
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +15,23 @@ import com.google.gson.Gson
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentCityWeatherBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
+import com.weatherapp.fragments.states.BackgroundState
 import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
+import com.weatherapp.receivers.NetworkChangeListener
+import com.weatherapp.receivers.NetworkStateReceiver
 
-class CityWeatherFragment : Fragment() {
+class CityWeatherFragment : Fragment(), NetworkChangeListener {
 
     private var viewModel: CityWeatherViewModel? = null
     private var binding: FragmentCityWeatherBinding? = null
     private var resourceProvider: ResourceProvider? = null
     private var daysAdapter: ThreeDaysAdapter? = null
+    private var networkStateReceiver: NetworkStateReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +63,12 @@ class CityWeatherFragment : Fragment() {
             CityWeatherViewModel(
                 resourceProvider!!,
                 fromSearch,
+                this,
                 city,
                 weatherForCity
             )
         } else {
-            CityWeatherViewModel(resourceProvider!!, fromSearch, city)
+            CityWeatherViewModel(resourceProvider!!, fromSearch, this, city)
         }
         setObservers()
         setAdapters()
@@ -75,6 +82,13 @@ class CityWeatherFragment : Fragment() {
         viewModel = null
         resourceProvider = null
         daysAdapter = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (networkStateReceiver != null)
+            activity?.unregisterReceiver(networkStateReceiver)
+        networkStateReceiver = null
     }
 
     private fun setButtonAdd(status: Boolean) {
@@ -131,7 +145,7 @@ class CityWeatherFragment : Fragment() {
             this::updateWeatherDaysForecast
         )
         viewModel?.addButtonLiveData?.observe(this.viewLifecycleOwner, this::setButtonAdd)
-        viewModel?.timeLiveData?.observe(this.viewLifecycleOwner, this::updateColorBackground)
+        viewModel?.backgroundLiveData?.observe(this.viewLifecycleOwner, this::updateColorBackground)
     }
 
     private fun handleResult(result: ResultState) {
@@ -141,7 +155,8 @@ class CityWeatherFragment : Fragment() {
                 hideAllViews()
             }
             ResultState.SUCCESS -> {
-                // do nothing
+                binding?.errorText?.visibility = View.GONE
+                showAllViews()
             }
         }
     }
@@ -162,6 +177,22 @@ class CityWeatherFragment : Fragment() {
         binding?.visibilityLinearLayout?.visibility = View.GONE
     }
 
+    private fun showAllViews() {
+        binding?.cityName?.visibility = View.VISIBLE
+        binding?.tempNow?.visibility = View.VISIBLE
+        binding?.textWeather?.visibility = View.VISIBLE
+        binding?.tempMin?.visibility = View.VISIBLE
+        binding?.tempMax?.visibility = View.VISIBLE
+        binding?.tv7DayForecast?.visibility = View.VISIBLE
+        binding?.rv7DayForecast?.visibility = View.VISIBLE
+        binding?.uvIndexLinearLayout?.visibility = View.VISIBLE
+        binding?.humidityLinearLayout?.visibility = View.VISIBLE
+        binding?.precipitationLinearLayout?.visibility = View.VISIBLE
+        binding?.sunsetLinearLayout?.visibility = View.VISIBLE
+        binding?.windLinearLayout?.visibility = View.VISIBLE
+        binding?.visibilityLinearLayout?.visibility = View.VISIBLE
+    }
+
     private fun setAdapters() {
         daysAdapter = ThreeDaysAdapter(resourceProvider!!)
         binding?.rv7DayForecast?.adapter = daysAdapter
@@ -171,13 +202,20 @@ class CityWeatherFragment : Fragment() {
         binding?.cityName?.text = name
     }
 
-    private fun updateColorBackground(hour: Int) {
-        when (hour) {
-            in 0..3 -> binding?.root?.background = getDrawable("night_gradient", resourceProvider!!)
-            in 22..23 -> binding?.root?.background = getDrawable("night_gradient", resourceProvider!!)
-            in 4..10 -> binding?.root?.background = getDrawable("morning_gradient", resourceProvider!!)
-            in 11..17 -> binding?.root?.background = getDrawable("noon_gradient", resourceProvider!!)
-            in 18..21 -> binding?.root?.background = getDrawable("evening_gradient", resourceProvider!!)
+    private fun updateColorBackground(state: BackgroundState) {
+        when (state) {
+            BackgroundState.NIGHT -> binding?.root?.background =
+                getDrawable("night_gradient", resourceProvider!!)
+            BackgroundState.MORNING -> binding?.root?.background =
+                getDrawable("morning_gradient", resourceProvider!!)
+            BackgroundState.NOON -> binding?.root?.background =
+                getDrawable("noon_gradient", resourceProvider!!)
+            BackgroundState.EVENING -> binding?.root?.background =
+                getDrawable("evening_gradient", resourceProvider!!)
+            BackgroundState.LIGHT_RAIN -> binding?.root?.background =
+                getDrawable("light_rain_gradient", resourceProvider!!)
+            BackgroundState.HEAVY_RAIN -> binding?.root?.background =
+                getDrawable("heavy_rain_gradient", resourceProvider!!)
         }
     }
 
@@ -231,6 +269,20 @@ class CityWeatherFragment : Fragment() {
 
     private fun updateWeatherDaysForecast(forecast: List<WeatherOnDay>) {
         daysAdapter?.submitList(forecast)
+    }
+
+    override fun setNetworkReceiver() {
+        if (networkStateReceiver == null) {
+            networkStateReceiver = NetworkStateReceiver.getInstance(this)
+            activity?.registerReceiver(
+                networkStateReceiver,
+                IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+            )
+        }
+    }
+
+    override fun onNetworkChanged(status: Boolean) {
+        viewModel?.getWeatherForCity()
     }
 
     private fun fromJson(city: String?): SimpleWeatherForCity? {

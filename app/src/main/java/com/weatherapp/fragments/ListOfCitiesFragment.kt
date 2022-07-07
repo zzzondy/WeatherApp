@@ -80,7 +80,8 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.unregisterReceiver(networkStateReceiver)
+        if (networkStateReceiver != null)
+            activity?.unregisterReceiver(networkStateReceiver)
         networkStateReceiver = null
         viewModel?.onClear()
         viewModel = null

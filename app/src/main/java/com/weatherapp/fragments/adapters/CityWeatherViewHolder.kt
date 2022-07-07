@@ -1,6 +1,7 @@
 package com.weatherapp.fragments.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.weatherapp.fragments.utils.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.weatherapp.BuildConfig
@@ -66,9 +67,9 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
                 "${resourceProvider.resources.getString(R.string.min)}: ${cityFromPreferences.tempMin}"
             itemBinding.maxTemp.text =
                 "${resourceProvider.resources.getString(R.string.max)}: ${cityFromPreferences.tempMax}"
-            if (cityFromPreferences.precipitation.toFloat() > 1 && cityFromPreferences.precipitation.toFloat() < 10)
+            if (cityFromPreferences.precipitation.toFloat() in 0.1..2.0)
                 itemBinding.root.background = getDrawable("light_rain_gradient", resourceProvider)
-            else if (cityFromPreferences.precipitation.toFloat() > 10)
+            else if (cityFromPreferences.precipitation.toFloat() > 2)
                 itemBinding.root.background = getDrawable("heavy_rain_gradient", resourceProvider)
             itemBinding.root.setOnClickListener {
                 cityWeatherCallback.openCityWeather(city, itemBinding.root, cityFromPreferences)
@@ -98,6 +99,12 @@ class CityWeatherViewHolder(private val itemBinding: ViewHolderCityWeatherBindin
                         "${resourceProvider.resources.getString(R.string.max)}: ${pair.second[0].tempMax}"
                     itemBinding.minTemp.text =
                         "${resourceProvider.resources.getString(R.string.min)}: ${pair.second[0].tempMin}"
+                    if (pair.first.precipitation.toFloat() in 0.1..2.0) {
+                        itemBinding.root.background =
+                            getDrawable("light_rain_gradient", resourceProvider)
+                    } else if (pair.first.precipitation.toFloat() > 2)
+                        itemBinding.root.background =
+                            getDrawable("heavy_rain_gradient", resourceProvider)
                     resourceProvider.updateCache(city.cityId, toSimpleCity(city, pair))
                     itemBinding.root.setOnClickListener {
                         cityWeatherCallback.openCityWeather(
