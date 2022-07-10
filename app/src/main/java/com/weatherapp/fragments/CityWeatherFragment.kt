@@ -3,11 +3,12 @@ package com.weatherapp.fragments
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
@@ -28,10 +29,12 @@ import com.weatherapp.receivers.NetworkStateReceiver
 class CityWeatherFragment : Fragment(), NetworkChangeListener {
 
     private var viewModel: CityWeatherViewModel? = null
-    private var binding: FragmentCityWeatherBinding? = null
     private var resourceProvider: ResourceProvider? = null
     private var daysAdapter: ThreeDaysAdapter? = null
     private var networkStateReceiver: NetworkStateReceiver? = null
+
+    private var _binding: FragmentCityWeatherBinding? = null
+    private val binding: FragmentCityWeatherBinding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +51,14 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_city_weather, container, false)
+    ): View {
+        _binding = FragmentCityWeatherBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resourceProvider = ResourceProvider(requireContext())
-        binding = FragmentCityWeatherBinding.bind(view)
         val weatherForCity = fromJson(requireArguments().getString(ARG_CITY_WEATHER))
         val city = fromJson(requireArguments().getString(ARG_CITY)!!)
         val fromSearch = requireArguments().getBoolean(ARG_FROM_SEARCH)
@@ -77,7 +80,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
         viewModel?.onClear()
         viewModel = null
         resourceProvider = null
@@ -93,7 +96,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
 
     private fun setButtonAdd(status: Boolean) {
         if (status) {
-            binding?.addButton?.apply {
+            binding.addButton.apply {
                 visibility = View.VISIBLE
                 setOnClickListener {
                     viewModel?.addCity()
@@ -105,17 +108,17 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
 
     private fun setClickListeners() {
 
-        binding?.openPreviousScreen?.setOnClickListener {
+        binding.openPreviousScreen.setOnClickListener {
             Navigation.findNavController(it).apply {
                 popBackStack()
             }
         }
 
-        binding?.swipeRefreshLayout?.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel?.getWeatherForCity(
                 fromJson(requireArguments().getString(ARG_CITY)!!).cityId
             )
-            binding?.swipeRefreshLayout?.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -151,120 +154,119 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     private fun handleResult(result: ResultState) {
         when (result) {
             ResultState.ERROR -> {
-                binding?.errorText?.visibility = View.VISIBLE
+                binding.errorText.visibility = View.VISIBLE
                 hideAllViews()
             }
             ResultState.SUCCESS -> {
-                binding?.errorText?.visibility = View.GONE
+                binding.errorText.visibility = View.GONE
                 showAllViews()
             }
         }
     }
 
     private fun hideAllViews() {
-        binding?.cityName?.visibility = View.GONE
-        binding?.tempNow?.visibility = View.GONE
-        binding?.textWeather?.visibility = View.GONE
-        binding?.tempMin?.visibility = View.GONE
-        binding?.tempMax?.visibility = View.GONE
-        binding?.tv7DayForecast?.visibility = View.GONE
-        binding?.rv7DayForecast?.visibility = View.GONE
-        binding?.uvIndexLinearLayout?.visibility = View.GONE
-        binding?.humidityLinearLayout?.visibility = View.GONE
-        binding?.precipitationLinearLayout?.visibility = View.GONE
-        binding?.sunsetLinearLayout?.visibility = View.GONE
-        binding?.windLinearLayout?.visibility = View.GONE
-        binding?.visibilityLinearLayout?.visibility = View.GONE
+        binding.tempNow.visibility = View.GONE
+        binding.textWeather.visibility = View.GONE
+        binding.tempMin.visibility = View.GONE
+        binding.tempMax.visibility = View.GONE
+        binding.tv7DayForecast.visibility = View.GONE
+        binding.rv7DayForecast.visibility = View.GONE
+        binding.uvIndexLinearLayout.visibility = View.GONE
+        binding.humidityLinearLayout.visibility = View.GONE
+        binding.precipitationLinearLayout.visibility = View.GONE
+        binding.sunsetLinearLayout.visibility = View.GONE
+        binding.windLinearLayout.visibility = View.GONE
+        binding.visibilityLinearLayout.visibility = View.GONE
     }
 
     private fun showAllViews() {
-        binding?.cityName?.visibility = View.VISIBLE
-        binding?.tempNow?.visibility = View.VISIBLE
-        binding?.textWeather?.visibility = View.VISIBLE
-        binding?.tempMin?.visibility = View.VISIBLE
-        binding?.tempMax?.visibility = View.VISIBLE
-        binding?.tv7DayForecast?.visibility = View.VISIBLE
-        binding?.rv7DayForecast?.visibility = View.VISIBLE
-        binding?.uvIndexLinearLayout?.visibility = View.VISIBLE
-        binding?.humidityLinearLayout?.visibility = View.VISIBLE
-        binding?.precipitationLinearLayout?.visibility = View.VISIBLE
-        binding?.sunsetLinearLayout?.visibility = View.VISIBLE
-        binding?.windLinearLayout?.visibility = View.VISIBLE
-        binding?.visibilityLinearLayout?.visibility = View.VISIBLE
+        binding.cityName.visibility = View.VISIBLE
+        binding.tempNow.visibility = View.VISIBLE
+        binding.textWeather.visibility = View.VISIBLE
+        binding.tempMin.visibility = View.VISIBLE
+        binding.tempMax.visibility = View.VISIBLE
+        binding.tv7DayForecast.visibility = View.VISIBLE
+        binding.rv7DayForecast.visibility = View.VISIBLE
+        binding.uvIndexLinearLayout.visibility = View.VISIBLE
+        binding.humidityLinearLayout.visibility = View.VISIBLE
+        binding.precipitationLinearLayout.visibility = View.VISIBLE
+        binding.sunsetLinearLayout.visibility = View.VISIBLE
+        binding.windLinearLayout.visibility = View.VISIBLE
+        binding.visibilityLinearLayout.visibility = View.VISIBLE
     }
 
     private fun setAdapters() {
         daysAdapter = ThreeDaysAdapter(resourceProvider!!)
-        binding?.rv7DayForecast?.adapter = daysAdapter
+        binding.rv7DayForecast.adapter = daysAdapter
     }
 
     private fun updateCityName(name: String) {
-        binding?.cityName?.text = name
+        binding.cityName.text = name
     }
 
     private fun updateColorBackground(state: BackgroundState) {
-        when (state) {
-            BackgroundState.NIGHT -> binding?.root?.background =
-                getDrawable("night_gradient", resourceProvider!!)
-            BackgroundState.MORNING -> binding?.root?.background =
-                getDrawable("morning_gradient", resourceProvider!!)
-            BackgroundState.NOON -> binding?.root?.background =
-                getDrawable("noon_gradient", resourceProvider!!)
-            BackgroundState.EVENING -> binding?.root?.background =
-                getDrawable("evening_gradient", resourceProvider!!)
-            BackgroundState.LIGHT_RAIN -> binding?.root?.background =
-                getDrawable("light_rain_gradient", resourceProvider!!)
-            BackgroundState.HEAVY_RAIN -> binding?.root?.background =
-                getDrawable("heavy_rain_gradient", resourceProvider!!)
+        binding.root.background = when (state) {
+            BackgroundState.NIGHT ->
+                getDrawable("night_big_gradient", resourceProvider!!)
+            BackgroundState.MORNING ->
+                getDrawable("morning_big_gradient", resourceProvider!!)
+            BackgroundState.NOON ->
+                getDrawable("noon_big_gradient", resourceProvider!!)
+            BackgroundState.EVENING ->
+                getDrawable("evening_big_gradient", resourceProvider!!)
+            BackgroundState.LIGHT_RAIN ->
+                getDrawable("light_rain_big_gradient", resourceProvider!!)
+            BackgroundState.HEAVY_RAIN ->
+                getDrawable("heavy_rain_big_gradient", resourceProvider!!)
         }
     }
 
     private fun updateTempNow(temp: String) {
-        binding?.tempNow?.text = "$temp${getString(R.string.celsius)}"
+        binding.tempNow.text = "$temp${getString(R.string.celsius)}"
     }
 
     private fun updateWeatherText(newText: String) {
-        binding?.textWeather?.text = newText
+        binding.textWeather.text = newText
     }
 
     private fun updateTempMax(temp: String) {
-        binding?.tempMax?.text = "${getString(R.string.max)}: ${temp}${getString(R.string.celsius)}"
+        binding.tempMax.text = "${getString(R.string.max)}: ${temp}${getString(R.string.celsius)}"
     }
 
     private fun updateTempMin(temp: String) {
-        binding?.tempMin?.text = "${getString(R.string.min)}: $temp${getString(R.string.celsius)}"
+        binding.tempMin.text = "${getString(R.string.min)}: $temp${getString(R.string.celsius)}"
     }
 
     private fun updateUvIndex(uvIndex: String) {
-        binding?.uvIndex?.text = uvIndex
+        binding.uvIndex.text = uvIndex
     }
 
     private fun updateUvIndexText(uvIndexText: String) {
-        binding?.uvIndexText?.text = uvIndexText
+        binding.uvIndexText.text = uvIndexText
     }
 
     private fun updateWindSpeed(speed: String) {
-        binding?.windSpeed?.text = "$speed ${getString(R.string.meter_per_seconds)}"
+        binding.windSpeed.text = "$speed ${getString(R.string.meter_per_seconds)}"
     }
 
     private fun updateWindDirection(direction: String) {
-        binding?.windDirection?.text = direction
+        binding.windDirection.text = direction
     }
 
     private fun updateSunset(sunset: String) {
-        binding?.sunsetTime?.text = sunset
+        binding.sunsetTime.text = sunset
     }
 
     private fun updateHumidity(humidity: String) {
-        binding?.humidity?.text = "$humidity %"
+        binding.humidity.text = "$humidity %"
     }
 
     private fun updateVisibility(visibility: String) {
-        binding?.visibility?.text = "$visibility ${getString(R.string.kilometers)}"
+        binding.visibility.text = "$visibility ${getString(R.string.kilometers)}"
     }
 
     private fun updatePrecipitation(precipitation: String) {
-        binding?.precipitation?.text = "$precipitation ${getString(R.string.millimeters)}"
+        binding.precipitation.text = "$precipitation ${getString(R.string.millimeters)}"
     }
 
     private fun updateWeatherDaysForecast(forecast: List<WeatherOnDay>) {

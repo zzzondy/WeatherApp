@@ -1,24 +1,56 @@
 package com.weatherapp.fragments
 
+import android.Manifest
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.weatherapp.BuildConfig
 import com.weatherapp.database.CityWeatherRepository
+import com.weatherapp.fragments.states.BackgroundState
+import com.weatherapp.fragments.states.ListState
+import com.weatherapp.fragments.utils.getDrawable
+import com.weatherapp.fragments.utils.toSimpleCity
 import com.weatherapp.models.entities.DatabaseCity
+import com.weatherapp.models.entities.SimpleWeatherForCity
+import com.weatherapp.models.network.WeatherApiModule
+import com.weatherapp.providers.GetUserLocationResult
+import com.weatherapp.providers.LocationProvider
+import com.weatherapp.providers.ResourceProvider
+import com.weatherapp.receivers.NetworkChangeListener
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import kotlin.math.round
 
 class ListOfCitiesViewModel(
-    private val cityWeatherRepository: CityWeatherRepository
+    private val resourceProvider: ResourceProvider,
+    private val cityWeatherRepository: CityWeatherRepository,
+    private val locationProvider: LocationProvider,
+    private val networkChangeListener: NetworkChangeListener
 ) :
     ViewModel() {
+    private val weatherApiModule = WeatherApiModule.getInstance()
+
+    private val language = resourceProvider.language
+
     private val mutableListOfCitiesLiveData = MutableLiveData<List<DatabaseCity>>()
     val listOfCitiesLiveData: LiveData<List<DatabaseCity>> get() = mutableListOfCitiesLiveData
+
+    private val mutableResultState = MutableLiveData<ListState>()
+    val resultState: LiveData<ListState> get() = mutableResultState
+
+    private val mutableLocationLiveData = MutableLiveData<GetUserLocationResult>()
+    val locationLiveData: LiveData<GetUserLocationResult> get() = mutableLocationLiveData
+
+    private val mutableBackgroundLiveData = MutableLiveData<BackgroundState>()
+    val backgroundLiveData: LiveData<BackgroundState> get() = mutableBackgroundLiveData
 
     private val subscriptions = CompositeDisposable()
 
@@ -33,6 +65,10 @@ class ListOfCitiesViewModel(
             .map { it.map { cityWeatherRepository.toCity(it) } }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = { listOfCities ->
+                if (listOfCities.isEmpty())
+                    mutableResultState.value = ListState.EMPTY
+                else
+                    mutableResultState.value = ListState.NOT_EMPTY
                 mutableListOfCitiesLiveData.value = listOfCities.sortedBy { it.idAtList }
             },
                 onError = { Log.e("error", it.toString()) })
@@ -53,6 +89,95 @@ class ListOfCitiesViewModel(
                 .subscribeBy(onError = { Log.e("error", it.toString()) })
         )
     }
+
+    @RequiresPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+    fun requestLocation() {
+        val lastLocation = locationProvider.requestLastKnownLocation()
+        if (lastLocation != null) {
+            lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    val longitude = Math.round(location.longitude * 100) / 100.0
+                    val latitude = Math.round(location.latitude * 100) / 100.0
+                    getWeatherForLocation("${longitude},${latitude}")
+                } else {
+                    mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
+                }
+            }.addOnFailureListener {
+                mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
+            }
+        } else {
+            mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+    private fun getWeatherForLocation(location: String) {
+        weatherApiModule.cityService.getCity(location, language, BuildConfig.API_KEY)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .map { city ->
+                DatabaseCity(
+                    city.location[0].name,
+                    city.location[0].id,
+                    city.location[0].timezone,
+                    null
+                )
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = { city ->
+                mutableBackgroundLiveData.value = getBackgroundTime(city.timezone)
+                val weatherFromPref = checkWeatherAtPref(city.cityId)
+                if (weatherFromPref != null) {
+                    mutableLocationLiveData.value = GetUserLocationResult.Success(weatherFromPref)
+                } else {
+                    weatherApiModule.weatherService.getWeatherNow(
+                        city.cityId,
+                        language,
+                        BuildConfig.API_KEY
+                    )
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .zipWith(
+                            weatherApiModule.weatherService.getWeatherOnDays(
+                                city.cityId,
+                                language,
+                                BuildConfig.API_KEY
+                            )
+                                .subscribeOn(Schedulers.io())
+                        )
+                        .map { pair -> pair.first.now to pair.second.daily }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onSuccess = { pair ->
+                            mutableLocationLiveData.value =
+                                GetUserLocationResult.Success(toSimpleCity(city, pair))
+                            resourceProvider.updateCache(city.cityId, toSimpleCity(city, pair))
+                        }, onError = {networkChangeListener.setNetworkReceiver()})
+                        .addTo(subscriptions)
+                }
+            }, onError = {networkChangeListener.setNetworkReceiver()})
+            .addTo(subscriptions)
+    }
+
+    private fun checkWeatherAtPref(cityId: String): SimpleWeatherForCity? {
+        val passedTime = resourceProvider.getUpdateTime()
+        val cityFromPreferences = resourceProvider.getFromPref(cityId)
+        return if (cityFromPreferences != null && passedTime != null && (Calendar.getInstance().time.time - passedTime.time) / (60 * 1000) <= 5)
+            cityFromPreferences
+        else
+            null
+    }
+
+    private fun getBackgroundTime(timezone: String): BackgroundState {
+        return when (Calendar.getInstance(TimeZone.getTimeZone(timezone))
+            .get(Calendar.HOUR_OF_DAY)) {
+            in 0..3 -> BackgroundState.NIGHT
+            in 22..23 -> BackgroundState.NIGHT
+            in 4..10 -> BackgroundState.MORNING
+            in 11..17 -> BackgroundState.NOON
+            else -> BackgroundState.EVENING
+        }
+    }
+
 
     fun onClear() {
         subscriptions.dispose()

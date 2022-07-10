@@ -193,6 +193,7 @@ class CityWeatherViewModel(
     }
 
     private fun updateDataFromPassedWeather() {
+        mutableResultLiveData.value = ResultState.SUCCESS
         mutableWeatherTextLiveData.value = weatherForCity?.textWeather
         mutableTempNowLiveData.value = weatherForCity?.tempNow
         mutablePrecipitationLiveData.value = weatherForCity?.precipitation

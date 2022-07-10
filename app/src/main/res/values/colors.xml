@@ -24,4 +24,5 @@
     <color name="light_rainy2">#6C6960</color>
     <color name="heavy_rainy1">#293133</color>
     <color name="heavy_rainy2">#919192</color>
+    <color name="transparent">#22000000</color>
 </resources>

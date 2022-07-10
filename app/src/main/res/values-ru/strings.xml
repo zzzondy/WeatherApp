@@ -8,7 +8,7 @@
     <string name="hourly_forecast">Почасовой прогноз</string>
     <string name="partly_cloudy">Облачно</string>
     <string name="uv_index">УВ ИНДЕКС</string>
-    <string name="low">Низко</string>
+    <string name="low">Низкий</string>
     <string name="_6_m_s">6 м/с</string>
     <string name="ne">С-В</string>
     <string name="humidity">ВЛАЖНОСТЬ</string>
@@ -19,7 +19,7 @@
     <string name="max" translatable="false">В</string>
     <string name="min" translatable="false">М</string>
     <string name="middle">Средний</string>
-    <string name="high">Выскокий</string>
+    <string name="high">Высокий</string>
     <string name="very_high">Очень высокий</string>
     <string name="extremal">Экстремальный</string>
     <string name="kilometers">КМ</string>
@@ -41,4 +41,11 @@
     <string name="delete">Удалить</string>
     <string name="add">Добавить</string>
     <string name="today">Сегодня</string>
+    <string name="empty_list">Вы не добавили ни одного города.</string>
+    <string name="current_location">Текущая геолокация</string>
+    <string name="permission_dialog_explanation_text">Для продолжения, пожалуйста, разрешите доступ к геолокации</string>
+    <string name="permission_dialog_denied_text">Эта функция недоступна без доступа к геолокации. Открыть настройки?</string>
+    <string name="dialog_negative_button">Отмена</string>
+    <string name="dialog_positive_button">ОК</string>
+    <string name="no_access">Эта функция неактивна без доступа к геолокации</string>
 </resources>
