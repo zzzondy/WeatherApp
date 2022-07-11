@@ -97,6 +97,14 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         locationProvider = FusedLocationProvider(requireContext())
         viewModel =
             ListOfCitiesViewModel(resourceProvider!!, cityWeatherRepository!!, locationProvider!!, this)
+        setRecyclerViewSwipeListener()
+        setObservers()
+        setAdapters()
+        setClickListeners()
+    }
+
+    override fun onStart() {
+        super.onStart()
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -108,10 +116,6 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
                 onOpenLocationWeather()
             }
         }
-        setRecyclerViewSwipeListener()
-        setObservers()
-        setAdapters()
-        setClickListeners()
     }
 
     override fun onDetach() {

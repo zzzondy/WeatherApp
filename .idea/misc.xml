@@ -18,6 +18,7 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_1010.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__00.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__01_fill.xml" value="0.3335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_sunny.xml" value="0.1605" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/light_rain_big_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/light_rain_gradient.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_big_gradient.xml" value="0.335" />
@@ -32,13 +33,16 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/splash_screen_layout.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.3582427536231884" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.27151639344262296" />
-        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.13125" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_list_of_cities.xml" value="0.3175213675213675" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_search_cities.xml" value="0.2701502732240437" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/view_holder_city.xml" value="0.2701502732240437" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/view_holder_city_weather.xml" value="0.2701502732240437" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/view_holder_weather_on_day.xml" value="0.2701502732240437" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/view_holder_weather_on_hour.xml" value="0.2701502732240437" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/mipmap-anydpi-v26/ic_sunny_launcher.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/mipmap-anydpi-v26/ic_sunny_launcher_round.xml" value="0.33" />
       </map>
     </option>
   </component>

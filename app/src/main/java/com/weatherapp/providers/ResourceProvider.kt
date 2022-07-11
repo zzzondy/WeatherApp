@@ -15,17 +15,27 @@ class ResourceProvider(val context: Context) {
     fun updateCache(cityTag: String, city: SimpleWeatherForCity) {
         sharedPreferences.edit().apply {
             putString(cityTag, toJson(city))
+            updateTime()
+            apply()
+        }
+    }
+
+    fun updateCacheWithLocationWeather(city: SimpleWeatherForCity) {
+        sharedPreferences.edit().apply {
+            putString(LOCATION_CITY, toJson(city))
+            updateTime()
+            apply()
+        }
+    }
+
+    private fun updateTime() {
+        sharedPreferences.edit().apply {
             putString(UPDATE_TIME, toJson(Calendar.getInstance().time))
             apply()
         }
     }
 
-    fun deleteCache() {
-        sharedPreferences.edit().apply {
-            clear()
-            apply()
-        }
-    }
+    fun getLocationFromPref() = fromJson(sharedPreferences.getString(LOCATION_CITY, null))
 
     fun getFromPref(cityTag: String) = fromJson(sharedPreferences.getString(cityTag, null))
 
@@ -42,7 +52,8 @@ class ResourceProvider(val context: Context) {
     private fun dateFromJson(date: String?): Date? = Gson().fromJson(date, Date::class.java)
 
     companion object {
-        const val TEMP_DATA = "TEMP_DATA"
-        const val UPDATE_TIME = "UPDATE_TIME"
+        private const val TEMP_DATA = "TEMP_DATA"
+        private const val UPDATE_TIME = "UPDATE_TIME"
+        private const val LOCATION_CITY = "LOCATION_CITY"
     }
 }

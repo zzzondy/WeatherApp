@@ -19,6 +19,7 @@ fun toSimpleCity(city: DatabaseCity, pair: Pair<WeatherNow, List<WeatherOnDay>>)
     SimpleWeatherForCity(
         city.cityName,
         city.cityId,
+        city.timezone,
         pair.first.temp,
         pair.first.text,
         pair.second[0].tempMax,

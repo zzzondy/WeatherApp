@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.google.android.material.transition.MaterialContainerTransform
@@ -18,6 +16,7 @@ import com.weatherapp.databinding.FragmentCityWeatherBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
 import com.weatherapp.fragments.states.BackgroundState
 import com.weatherapp.fragments.states.ResultState
+import com.weatherapp.fragments.states.LoadingState
 import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
@@ -118,7 +117,6 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
             viewModel?.getWeatherForCity(
                 fromJson(requireArguments().getString(ARG_CITY)!!).cityId
             )
-            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
@@ -149,6 +147,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
         )
         viewModel?.addButtonLiveData?.observe(this.viewLifecycleOwner, this::setButtonAdd)
         viewModel?.backgroundLiveData?.observe(this.viewLifecycleOwner, this::updateColorBackground)
+        viewModel?.loadingLiveData?.observe(this.viewLifecycleOwner, this::setLoadingState)
     }
 
     private fun handleResult(result: ResultState) {
@@ -218,6 +217,18 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
                 getDrawable("light_rain_big_gradient", resourceProvider!!)
             BackgroundState.HEAVY_RAIN ->
                 getDrawable("heavy_rain_big_gradient", resourceProvider!!)
+        }
+    }
+
+    private fun setLoadingState(state: LoadingState) {
+        when (state) {
+            LoadingState.LOADING -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+            LoadingState.READY -> {
+                binding.progressBar.visibility = View.GONE
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

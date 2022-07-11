@@ -1,5 +1,5 @@
 package com.weatherapp.fragments.states
 
-enum class SearchState {
+enum class LoadingState {
     LOADING, READY
 }

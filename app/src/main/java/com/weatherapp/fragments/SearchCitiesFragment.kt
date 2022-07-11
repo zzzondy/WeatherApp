@@ -3,6 +3,7 @@ package com.weatherapp.fragments
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -68,7 +69,7 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         setOnClickListeners()
         setObservers()
         binding.queryLine.textChanges()
-            .map { text -> text.toString() }
+            .map { text -> text.toString().replace(" ", "") }
             .distinctUntilChanged()
             .subscribe(viewModel?.queryInput!!)
     }
@@ -143,10 +144,10 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         }
     }
 
-    private fun handleSearchState(state: SearchState) {
+    private fun handleSearchState(state: LoadingState) {
         when (state) {
-            SearchState.LOADING -> binding.searchProgress.visibility = View.VISIBLE
-            SearchState.READY -> binding.searchProgress.visibility = View.GONE
+            LoadingState.LOADING -> binding.searchProgress.visibility = View.VISIBLE
+            LoadingState.READY -> binding.searchProgress.visibility = View.GONE
         }
     }
 
@@ -198,8 +199,9 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
     }
 
     override fun onNetworkChanged(status: Boolean) {
-        binding.queryLine.textChanges()
-            .map { text -> text.toString() }
+        binding.queryLine
+            .textChanges()
+            .map { text -> text.toString().replace(" ", "") }
             .distinctUntilChanged()
             .subscribe(viewModel?.queryInput!!)
     }

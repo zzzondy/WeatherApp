@@ -8,7 +8,7 @@ import com.weatherapp.R
 import com.weatherapp.database.CityWeatherRepository
 import com.weatherapp.fragments.states.BackgroundState
 import com.weatherapp.fragments.states.ResultState
-import com.weatherapp.fragments.utils.getDrawable
+import com.weatherapp.fragments.states.LoadingState
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
@@ -46,6 +46,9 @@ class CityWeatherViewModel(
 
     private val mutableBackgroundLiveData = MutableLiveData<BackgroundState>()
     val backgroundLiveData: LiveData<BackgroundState> get() = mutableBackgroundLiveData
+
+    private val mutableLoadingLiveData = MutableLiveData<LoadingState>()
+    val loadingLiveData: LiveData<LoadingState> get() = mutableLoadingLiveData
 
     private val mutableResultLiveData = MutableLiveData<ResultState>()
     val resultLiveData: LiveData<ResultState> get() = mutableResultLiveData
@@ -115,8 +118,11 @@ class CityWeatherViewModel(
     }
 
     fun getWeatherForCity(cityId: String = city.cityId) {
+        mutableLoadingLiveData.value = LoadingState.LOADING
         weatherApiModule.weatherService.getWeatherNow(cityId, language, BuildConfig.API_KEY)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
             .zipWith(
                 weatherApiModule.weatherService.getWeatherOnDays(
                     cityId,
@@ -125,10 +131,10 @@ class CityWeatherViewModel(
                 )
                     .subscribeOn(Schedulers.io())
             )
-            .observeOn(Schedulers.io())
             .map { it.first.now to it.second.daily }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = { pair ->
+                mutableLoadingLiveData.value = LoadingState.READY
                 mutableResultLiveData.value = ResultState.SUCCESS
                 mutable3DaysForecastLiveData.value = pair.second
                 mutableSunsetLiveData.value = pair.second[0].sunset
@@ -156,6 +162,7 @@ class CityWeatherViewModel(
                 mutableHumidityLiveData.value = pair.first.humidity
             },
                 onError = {
+                    mutableLoadingLiveData.value = LoadingState.READY
                     mutableResultLiveData.value = ResultState.ERROR
                     networkChangeListener.setNetworkReceiver()
                 })

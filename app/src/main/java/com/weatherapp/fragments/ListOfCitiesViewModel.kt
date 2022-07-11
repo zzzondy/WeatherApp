@@ -92,6 +92,12 @@ class ListOfCitiesViewModel(
 
     @RequiresPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
     fun requestLocation() {
+        val weatherFromLocation = getWeatherForLocationFromPref()
+        if (weatherFromLocation != null) {
+            mutableBackgroundLiveData.value = getBackgroundTime(weatherFromLocation.timeZone)
+            mutableLocationLiveData.value = GetUserLocationResult.Success(weatherFromLocation)
+            return
+        }
         val lastLocation = locationProvider.requestLastKnownLocation()
         if (lastLocation != null) {
             lastLocation.addOnSuccessListener { location ->
@@ -126,45 +132,44 @@ class ListOfCitiesViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = { city ->
                 mutableBackgroundLiveData.value = getBackgroundTime(city.timezone)
-                val weatherFromPref = checkWeatherAtPref(city.cityId)
-                if (weatherFromPref != null) {
-                    mutableLocationLiveData.value = GetUserLocationResult.Success(weatherFromPref)
-                } else {
-                    weatherApiModule.weatherService.getWeatherNow(
-                        city.cityId,
-                        language,
-                        BuildConfig.API_KEY
-                    )
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .zipWith(
-                            weatherApiModule.weatherService.getWeatherOnDays(
-                                city.cityId,
-                                language,
-                                BuildConfig.API_KEY
-                            )
-                                .subscribeOn(Schedulers.io())
+                weatherApiModule.weatherService.getWeatherNow(
+                    city.cityId,
+                    language,
+                    BuildConfig.API_KEY
+                )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .zipWith(
+                        weatherApiModule.weatherService.getWeatherOnDays(
+                            city.cityId,
+                            language,
+                            BuildConfig.API_KEY
                         )
-                        .map { pair -> pair.first.now to pair.second.daily }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onSuccess = { pair ->
-                            mutableLocationLiveData.value =
-                                GetUserLocationResult.Success(toSimpleCity(city, pair))
-                            resourceProvider.updateCache(city.cityId, toSimpleCity(city, pair))
-                        }, onError = {networkChangeListener.setNetworkReceiver()})
-                        .addTo(subscriptions)
-                }
-            }, onError = {networkChangeListener.setNetworkReceiver()})
+                            .subscribeOn(Schedulers.io())
+                    )
+                    .map { pair -> pair.first.now to pair.second.daily }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { pair ->
+                        mutableLocationLiveData.value =
+                            GetUserLocationResult.Success(toSimpleCity(city, pair))
+                        resourceProvider.updateCacheWithLocationWeather(toSimpleCity(city, pair))
+                    }, onError = { networkChangeListener.setNetworkReceiver() })
+                    .addTo(subscriptions)
+            }, onError = { networkChangeListener.setNetworkReceiver() })
             .addTo(subscriptions)
     }
 
-    private fun checkWeatherAtPref(cityId: String): SimpleWeatherForCity? {
-        val passedTime = resourceProvider.getUpdateTime()
-        val cityFromPreferences = resourceProvider.getFromPref(cityId)
-        return if (cityFromPreferences != null && passedTime != null && (Calendar.getInstance().time.time - passedTime.time) / (60 * 1000) <= 5)
-            cityFromPreferences
+    private fun getWeatherForLocationFromPref(): SimpleWeatherForCity? {
+        val weatherFromPref = resourceProvider.getLocationFromPref()
+        return if (checkPassedTime() && weatherFromPref != null)
+            weatherFromPref
         else
             null
+    }
+
+    private fun checkPassedTime(): Boolean {
+        val passedTime = resourceProvider.getUpdateTime()
+        return (passedTime != null && (Calendar.getInstance().time.time - passedTime.time) / (60 * 1000) <= 5)
     }
 
     private fun getBackgroundTime(timezone: String): BackgroundState {

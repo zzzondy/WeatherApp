@@ -24,8 +24,8 @@ internal class SearchCitiesViewModel(resourceProvider: ResourceProvider) :
     private val mutableResultOutput = MutableLiveData<SearchResult>()
     val resultOutput: LiveData<SearchResult> get() = mutableResultOutput
 
-    private val mutableSearchStateOutput = MutableLiveData<SearchState>()
-    val searchStateOutput: LiveData<SearchState> get() = mutableSearchStateOutput
+    private val mutableSearchStateOutput = MutableLiveData<LoadingState>()
+    val searchStateOutput: LiveData<LoadingState> get() = mutableSearchStateOutput
 
     private val weatherApiModule = WeatherApiModule.getInstance()
 
@@ -36,10 +36,10 @@ internal class SearchCitiesViewModel(resourceProvider: ResourceProvider) :
     init {
         queryInput
             .debounce(DEBOUNCE_DELAY_TIME, TimeUnit.MILLISECONDS, Schedulers.computation())
-            .doOnEach { mutableSearchStateOutput.postValue(SearchState.LOADING) }
+            .doOnEach { mutableSearchStateOutput.postValue(LoadingState.LOADING) }
             .switchMap(::searchCitiesByQuery)
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnEach { mutableSearchStateOutput.value = SearchState.READY }
+            .doOnEach { mutableSearchStateOutput.value = LoadingState.READY }
             .subscribeBy(
                 onNext = { searchResult ->
                     mutableResultOutput.value = searchResult

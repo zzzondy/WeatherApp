@@ -2,6 +2,7 @@ package com.weatherapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.weatherapp.providers.ResourceProvider
 
 class MainActivity : AppCompatActivity() {

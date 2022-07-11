@@ -3,6 +3,7 @@ package com.weatherapp.models.entities
 data class SimpleWeatherForCity(
     val cityName: String,
     val cityId: String,
+    val timeZone: String,
     val tempNow: String,
     val textWeather: String,
     val tempMax: String,
