@@ -45,10 +45,10 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true).apply {
-            duration = 300
+            duration = 350
         }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-            duration = 300
+            duration = 350
         }
     }
 

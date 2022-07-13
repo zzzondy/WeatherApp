@@ -12,14 +12,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/shape"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_weather">
+        app:layout_constraintTop_toBottomOf="@+id/openSearchCities">
 
         <TextView
             android:id="@+id/currentLocation"
@@ -43,6 +43,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/none"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -148,32 +149,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/openSearchCities"
-        style="@style/Widget.MaterialComponents.Button.Icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="40dp"
+        style="@style/Widget.Material3.Button.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:adjustViewBounds="true"
         android:contentDescription="@android:string/search_go"
-        android:scaleType="centerCrop"
-        android:src="@drawable/search"
+        app:icon="@drawable/search"
+        app:iconSize="32dp"
+        app:iconTint="@color/white"
+        app:rippleColor="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/openLocationWeather"
-        style="@style/Widget.MaterialComponents.Button.Icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="16dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/open_location"
-        android:scaleType="centerCrop"
-        android:src="@drawable/location"
-        app:layout_constraintEnd_toStartOf="@+id/openSearchCities"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView

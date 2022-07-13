@@ -10,6 +10,7 @@ interface CityApi {
     fun getCity(
         @Query("location") location: String,
         @Query("lang") language: String,
-        @Query("key") key: String
+        @Query("key") key: String,
+        @Query("number") number: String = "20"
     ): Single<CityResponse>
 }

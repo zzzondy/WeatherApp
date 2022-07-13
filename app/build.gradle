@@ -45,9 +45,9 @@ android {
 ext {
     versions = [
             retrofit        : "2.9.0",
-            gson            : "2.8.6",
+            gson            : "2.8.9",
             glide           : "4.6.1",
-            kotlinExt       : "2.3.0",
+            kotlinExt       : "2.5.0",
             kotlinCoroutines: "1.4.2",
             rx_java         : "2.2.20",
             rx_android      : "2.1.1",
@@ -56,15 +56,12 @@ ext {
             okhttp          : "4.9.0",
             navComponent    : "1.0.0-alpha05",
             room            : "2.2.6",
-            lottieVersion   : "3.4.0"
     ]
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
-
-    implementation "com.airbnb.android:lottie:$versions.lottieVersion"
 
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -79,13 +76,11 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
-    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation "androidx.recyclerview:recyclerview-selection:1.2.0-alpha01"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "io.coil-kt:coil:2.1.0"
-    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.1'
-
 
     implementation "io.reactivex.rxjava2:rxjava:$versions.rx_java"
     implementation "io.reactivex.rxjava2:rxkotlin:$versions.rx_kotlin"

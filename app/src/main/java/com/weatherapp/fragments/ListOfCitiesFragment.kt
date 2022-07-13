@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -17,7 +16,6 @@ import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -96,7 +94,12 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         cityWeatherRepository = CityWeatherRepository(requireContext())
         locationProvider = FusedLocationProvider(requireContext())
         viewModel =
-            ListOfCitiesViewModel(resourceProvider!!, cityWeatherRepository!!, locationProvider!!, this)
+            ListOfCitiesViewModel(
+                resourceProvider!!,
+                cityWeatherRepository!!,
+                locationProvider!!,
+                this
+            )
         setRecyclerViewSwipeListener()
         setObservers()
         setAdapters()
@@ -174,10 +177,6 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
             }
             Navigation.findNavController(it)
                 .navigate(R.id.action_listOfCitiesFragment_to_searchCitiesFragment)
-        }
-
-        binding.openLocationWeather.setOnClickListener {
-            onOpenLocationWeather()
         }
 
     }
@@ -298,7 +297,8 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
                     this.viewLifecycleOwner,
                     this::setBackgroundTime
                 )
-                binding.constraintLayoutCurrentLocation.transitionName = getString(R.string.location_city)
+                binding.constraintLayoutCurrentLocation.transitionName =
+                    getString(R.string.location_city)
                 binding.constraintLayoutCurrentLocation.setOnClickListener {
                     openCityWeather(
                         DatabaseCity(
@@ -361,10 +361,10 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         cityWeather: SimpleWeatherForCity?
     ) {
         exitTransition = MaterialElevationScale(true).apply {
-            duration = 300
+            duration = 350
         }
         reenterTransition = MaterialElevationScale(false).apply {
-            duration = 300
+            duration = 350
         }
         val extras = FragmentNavigatorExtras(originView to "cityWeatherFragment")
         Navigation.findNavController(requireView()).navigate(
@@ -489,9 +489,11 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
     }
 
     private fun restorePreferencesData() {
-        isRationaleShown = requireContext().getSharedPreferences(PERMISSION_SHARED_PREF, Context.MODE_PRIVATE)?.getBoolean(
-            KEY_LOCATION_PERMISSION_RATIONALE_SHOWN, false
-        ) ?: false
+        isRationaleShown =
+            requireContext().getSharedPreferences(PERMISSION_SHARED_PREF, Context.MODE_PRIVATE)
+                ?.getBoolean(
+                    KEY_LOCATION_PERMISSION_RATIONALE_SHOWN, false
+                ) ?: false
     }
 
     companion object {

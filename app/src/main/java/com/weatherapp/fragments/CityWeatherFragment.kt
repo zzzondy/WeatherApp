@@ -40,10 +40,10 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
         sharedElementEnterTransition = MaterialContainerTransform(requireContext(), true)
             .apply {
                 scrimColor = Color.TRANSPARENT
-                duration = 300
+                duration = 350
             }
         returnTransition = MaterialElevationScale(false).apply {
-            duration = 300
+            duration = 350
         }
     }
 
