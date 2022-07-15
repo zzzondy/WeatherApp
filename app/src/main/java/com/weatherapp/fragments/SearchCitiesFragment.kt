@@ -10,11 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.transition.MaterialSharedAxis
-import com.google.gson.Gson
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.weatherapp.R
 import com.weatherapp.databinding.FragmentSearchCitiesBinding
@@ -183,11 +181,12 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         originView: View,
         cityWeather: SimpleWeatherForCity?
     ) {
-        Navigation.findNavController(originView)
-            .navigate(
-                R.id.action_searchCitiesFragment_to_cityWeatherBottomSheetFragment,
-                bundleOf(CityWeatherBottomSheetFragment.ARG_CITY to toJson(city))
+        val action =
+            SearchCitiesFragmentDirections.actionSearchCitiesFragmentToCityWeatherBottomSheetFragment(
+                city.cityName, city.cityId, city.timezone
             )
+        Navigation.findNavController(originView)
+            .navigate(action)
     }
 
     override fun onNetworkChanged(status: Boolean) {
@@ -206,9 +205,5 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
                 IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
             )
         }
-    }
-
-    private fun toJson(city: DatabaseCity): String? {
-        return Gson().toJson(city)
     }
 }

@@ -10,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.gson.Gson
 import com.weatherapp.R
 import com.weatherapp.database.CityWeatherRepository
 import com.weatherapp.databinding.CityWeatherBottomSheetLayoutBinding
@@ -39,6 +39,7 @@ class CityWeatherBottomSheetFragment : BottomSheetDialogFragment(), NetworkChang
     private lateinit var daysAdapter: ThreeDaysAdapter
 
     private lateinit var city: DatabaseCity
+    private val args: CityWeatherBottomSheetFragmentArgs by navArgs()
 
     private var networkStateReceiver: NetworkStateReceiver? = null
 
@@ -63,7 +64,7 @@ class CityWeatherBottomSheetFragment : BottomSheetDialogFragment(), NetworkChang
         viewModel = CityWeatherBottomSheetViewModel(resourceProvider, repository)
         setListeners()
         setObservers()
-        city = fromJson(requireArguments().getString(ARG_CITY, null))
+        city = DatabaseCity(args.cityName.replace("_", " "), args.cityId, args.timezone, null)
         viewModel.getWeatherForCity(city)
     }
 
@@ -294,18 +295,10 @@ class CityWeatherBottomSheetFragment : BottomSheetDialogFragment(), NetworkChang
         viewModel.getWeatherForCity(city)
     }
 
-    private fun fromJson(city: String): DatabaseCity {
-        return Gson().fromJson(city, DatabaseCity::class.java)
-    }
-
     private fun getWindowHeight(): Int {
         // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
         (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
-    }
-
-    companion object {
-        const val ARG_CITY = "ARG_CITY"
     }
 }

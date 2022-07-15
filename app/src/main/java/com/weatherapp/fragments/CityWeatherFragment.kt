@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.gson.Gson
@@ -31,6 +32,8 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     private var resourceProvider: ResourceProvider? = null
     private var daysAdapter: ThreeDaysAdapter? = null
     private var networkStateReceiver: NetworkStateReceiver? = null
+
+    private val args: CityWeatherFragmentArgs by navArgs()
 
     private var _binding: FragmentCityWeatherBinding? = null
     private val binding: FragmentCityWeatherBinding get() = _binding!!
@@ -58,8 +61,8 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resourceProvider = ResourceProvider(requireContext())
-        val weatherForCity = fromJson(requireArguments().getString(ARG_CITY_WEATHER))
-        val city = fromJson(requireArguments().getString(ARG_CITY)!!)
+        val weatherForCity =  fromJson(args.weatherForCity)
+        val city = fromJson(args.city)
         viewModel = if (weatherForCity != null) {
             CityWeatherViewModel(
                 resourceProvider!!,
@@ -292,7 +295,6 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     }
 
     companion object {
-        const val ARG_CITY_WEATHER = "city_weather"
         const val ARG_CITY = "city"
     }
 

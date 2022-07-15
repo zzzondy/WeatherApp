@@ -357,7 +357,7 @@
                 app:iconTint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@color/gray"/>
+                app:rippleColor="@color/gray" />
 
             <TextView
                 android:id="@+id/errorText"

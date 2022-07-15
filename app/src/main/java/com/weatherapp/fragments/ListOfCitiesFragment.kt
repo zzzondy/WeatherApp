@@ -65,6 +65,16 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
     private var isRationaleShown = false
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        exitTransition = MaterialElevationScale(true).apply {
+            duration = 300
+        }
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
+            duration = 300
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         requestPermissionLauncher = registerForActivityResult(
@@ -169,12 +179,6 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
 
     private fun setClickListeners() {
         binding.openSearchCities.setOnClickListener {
-            exitTransition = MaterialElevationScale(true).apply {
-                duration = 300
-            }
-            reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false).apply {
-                duration = 300
-            }
             Navigation.findNavController(it)
                 .navigate(R.id.action_listOfCitiesFragment_to_searchCitiesFragment)
         }
@@ -367,13 +371,11 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
             duration = 350
         }
         val extras = FragmentNavigatorExtras(originView to "cityWeatherFragment")
+        val action = ListOfCitiesFragmentDirections.actionListOfCitiesFragmentToCityWeatherFragment(
+            toJson(city), toJson(cityWeather)
+        )
         Navigation.findNavController(requireView()).navigate(
-            R.id.action_listOfCitiesFragment_to_cityWeatherFragment,
-            bundleOf(
-                CityWeatherFragment.ARG_CITY_WEATHER to toJson(cityWeather),
-                CityWeatherFragment.ARG_CITY to toJson(city)
-            ),
-            null, extras
+            action, extras
         )
     }
 
