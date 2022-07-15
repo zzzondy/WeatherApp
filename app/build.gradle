@@ -54,7 +54,7 @@ ext {
             rx_kotlin       : "2.4.0",
             rx_binding      : "3.1.0",
             okhttp          : "4.9.0",
-            navComponent    : "1.0.0-alpha05",
+            navComponent    : "2.5.0",
             room            : "2.2.6",
     ]
 }
@@ -68,9 +68,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.kotlinExt"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.kotlinExt"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.kotlinExt"
-
-    implementation "android.arch.navigation:navigation-fragment-ktx:$versions.navComponent"
-    implementation "android.arch.navigation:navigation-ui-ktx:$versions.navComponent"
+    implementation "androidx.fragment:fragment-ktx:1.5.0"
 
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
@@ -94,6 +92,8 @@ dependencies {
 
     implementation "androidx.room:room-runtime:$versions.room"
     implementation "androidx.room:room-rxjava2:$versions.room"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0'
     kapt "androidx.room:room-compiler:$versions.room"
 
     implementation 'androidx.work:work-runtime-ktx:2.4.0'

@@ -371,7 +371,6 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
             R.id.action_listOfCitiesFragment_to_cityWeatherFragment,
             bundleOf(
                 CityWeatherFragment.ARG_CITY_WEATHER to toJson(cityWeather),
-                CityWeatherFragment.ARG_FROM_SEARCH to false,
                 CityWeatherFragment.ARG_CITY to toJson(city)
             ),
             null, extras

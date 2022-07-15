@@ -9,7 +9,7 @@
         android:id="@+id/cityWeatherFragment"
         android:name="com.weatherapp.fragments.CityWeatherFragment"
         android:label="cityWeatherFragment"
-        tools:layout="@layout/fragment_city_weather"/>
+        tools:layout="@layout/fragment_city_weather" />
 
     <fragment
         android:id="@+id/listOfCitiesFragment"
@@ -30,8 +30,17 @@
         android:name="com.weatherapp.fragments.SearchCitiesFragment"
         android:label="searchOfCitiesFragment"
         tools:layout="@layout/fragment_search_cities">
-
+        <action
+            android:id="@+id/action_searchCitiesFragment_to_cityWeatherBottomSheetFragment"
+            app:destination="@id/cityWeatherBottomSheetFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/cityWeatherBottomSheetFragment"
+        android:name="com.weatherapp.fragments.CityWeatherBottomSheetFragment"
+        android:label="CityWeatherBottomSheetFragment">
+
+    </dialog>
 
 
 </navigation>

@@ -1,86 +1,93 @@
 package com.weatherapp.fragments
 
+import android.app.Activity
 import android.content.IntentFilter
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialElevationScale
+import android.widget.FrameLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.weatherapp.R
-import com.weatherapp.databinding.FragmentCityWeatherBinding
+import com.weatherapp.database.CityWeatherRepository
+import com.weatherapp.databinding.CityWeatherBottomSheetLayoutBinding
 import com.weatherapp.fragments.adapters.ThreeDaysAdapter
 import com.weatherapp.fragments.states.BackgroundState
-import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.fragments.states.LoadingState
+import com.weatherapp.fragments.states.ResultState
 import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.models.entities.DatabaseCity
-import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.providers.ResourceProvider
 import com.weatherapp.receivers.NetworkChangeListener
 import com.weatherapp.receivers.NetworkStateReceiver
 
-class CityWeatherFragment : Fragment(), NetworkChangeListener {
+class CityWeatherBottomSheetFragment : BottomSheetDialogFragment(), NetworkChangeListener {
+    private var _binding: CityWeatherBottomSheetLayoutBinding? = null
+    private val binding: CityWeatherBottomSheetLayoutBinding get() = _binding!!
 
-    private var viewModel: CityWeatherViewModel? = null
-    private var resourceProvider: ResourceProvider? = null
-    private var daysAdapter: ThreeDaysAdapter? = null
+    private lateinit var resourceProvider: ResourceProvider
+    private lateinit var repository: CityWeatherRepository
+
+    private lateinit var viewModel: CityWeatherBottomSheetViewModel
+
+    private lateinit var daysAdapter: ThreeDaysAdapter
+
+    private lateinit var city: DatabaseCity
+
     private var networkStateReceiver: NetworkStateReceiver? = null
 
-    private var _binding: FragmentCityWeatherBinding? = null
-    private val binding: FragmentCityWeatherBinding get() = _binding!!
+    override fun getTheme() = R.style.AppBottomSheetDialogTheme
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform(requireContext(), true)
-            .apply {
-                scrimColor = Color.TRANSPARENT
-                duration = 350
-            }
-        returnTransition = MaterialElevationScale(false).apply {
-            duration = 350
-        }
-    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCityWeatherBinding.inflate(inflater, container, false)
+        _binding = CityWeatherBottomSheetLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         resourceProvider = ResourceProvider(requireContext())
-        val weatherForCity = fromJson(requireArguments().getString(ARG_CITY_WEATHER))
-        val city = fromJson(requireArguments().getString(ARG_CITY)!!)
-        viewModel = if (weatherForCity != null) {
-            CityWeatherViewModel(
-                resourceProvider!!,
-                city,
-                weatherForCity
-            )
-        } else {
-            CityWeatherViewModel(resourceProvider!!, city)
-        }
-        setObservers()
         setAdapters()
-        setClickListeners()
+        repository = CityWeatherRepository(requireContext())
+        viewModel = CityWeatherBottomSheetViewModel(resourceProvider, repository)
+        setListeners()
+        setObservers()
+        city = fromJson(requireArguments().getString(ARG_CITY, null))
+        viewModel.getWeatherForCity(city)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.let {
+            val bottomSheet =
+                it.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout
+            val behavior = BottomSheetBehavior.from(bottomSheet)
+            val layoutParams = bottomSheet.layoutParams
+            if (layoutParams != null) {
+                layoutParams.height = (getWindowHeight() * 0.9).toInt()
+            }
+            bottomSheet.layoutParams = layoutParams
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            behavior.peekHeight = getWindowHeight() / 2
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        viewModel?.onClear()
-        viewModel = null
-        resourceProvider = null
-        daysAdapter = null
+        viewModel.onClear()
     }
 
     override fun onDestroy() {
@@ -90,48 +97,46 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
         networkStateReceiver = null
     }
 
-    private fun setClickListeners() {
 
-        binding.openPreviousScreen.setOnClickListener {
-            Navigation.findNavController(it).apply {
-                popBackStack()
-            }
+    private fun setListeners() {
+        binding.addButton.setOnClickListener {
+            viewModel.addCityToDatabase(city)
+            dismiss()
         }
 
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel?.getWeatherForCity(
-                fromJson(requireArguments().getString(ARG_CITY)!!).cityId
-            )
+        binding.openPreviousScreen.setOnClickListener {
+            dismiss()
         }
     }
 
     private fun setObservers() {
-        viewModel?.resultLiveData?.observe(this.viewLifecycleOwner, this::handleResult)
-        viewModel?.cityNameLiveData?.observe(this.viewLifecycleOwner, this::updateCityName)
-        viewModel?.tempNowLiveData?.observe(this.viewLifecycleOwner, this::updateTempNow)
-        viewModel?.maxTempLiveData?.observe(this.viewLifecycleOwner, this::updateTempMax)
-        viewModel?.minTempLiveData?.observe(this.viewLifecycleOwner, this::updateTempMin)
-        viewModel?.uvIndexLiveData?.observe(this.viewLifecycleOwner, this::updateUvIndex)
-        viewModel?.uvIndexTextLiveData?.observe(this.viewLifecycleOwner, this::updateUvIndexText)
-        viewModel?.weatherTextLiveData?.observe(this.viewLifecycleOwner, this::updateWeatherText)
-        viewModel?.windSpeedLiveData?.observe(this.viewLifecycleOwner, this::updateWindSpeed)
-        viewModel?.windDirectionLiveData?.observe(
+        viewModel.resultState.observe(this.viewLifecycleOwner, this::handleResult)
+        viewModel.cityNameLiveData.observe(this.viewLifecycleOwner, this::updateCityName)
+        viewModel.tempNowLiveData.observe(this.viewLifecycleOwner, this::updateTempNow)
+        viewModel.maxTempLiveData.observe(this.viewLifecycleOwner, this::updateTempMax)
+        viewModel.minTempLiveData.observe(this.viewLifecycleOwner, this::updateTempMin)
+        viewModel.uvIndexLiveData.observe(this.viewLifecycleOwner, this::updateUvIndex)
+        viewModel.uvIndexTextLiveData.observe(this.viewLifecycleOwner, this::updateUvIndexText)
+        viewModel.weatherTextLiveData.observe(this.viewLifecycleOwner, this::updateWeatherText)
+        viewModel.windSpeedLiveData.observe(this.viewLifecycleOwner, this::updateWindSpeed)
+        viewModel.windDirectionLiveData.observe(
             this.viewLifecycleOwner,
             this::updateWindDirection
         )
-        viewModel?.sunsetLiveData?.observe(this.viewLifecycleOwner, this::updateSunset)
-        viewModel?.humidityLiveData?.observe(this.viewLifecycleOwner, this::updateHumidity)
-        viewModel?.visibilityLiveData?.observe(this.viewLifecycleOwner, this::updateVisibility)
-        viewModel?.precipitationLiveData?.observe(
+        viewModel.sunsetLiveData.observe(this.viewLifecycleOwner, this::updateSunset)
+        viewModel.humidityLiveData.observe(this.viewLifecycleOwner, this::updateHumidity)
+        viewModel.visibilityLiveData.observe(this.viewLifecycleOwner, this::updateVisibility)
+        viewModel.precipitationLiveData.observe(
             this.viewLifecycleOwner,
             this::updatePrecipitation
         )
-        viewModel?.days3ForecastLiveData?.observe(
+        viewModel.days3ForecastLiveData.observe(
             this.viewLifecycleOwner,
             this::updateWeatherDaysForecast
         )
-        viewModel?.backgroundLiveData?.observe(this.viewLifecycleOwner, this::updateColorBackground)
-        viewModel?.loadingLiveData?.observe(this.viewLifecycleOwner, this::setLoadingState)
+        viewModel.backgroundState.observe(this.viewLifecycleOwner, this::updateColorBackground)
+        viewModel.loadingState.observe(this.viewLifecycleOwner, this::setLoadingState)
+        viewModel.addButtonState.observe(this.viewLifecycleOwner, this::handleAddButtonState)
     }
 
     private fun handleResult(result: ResultState) {
@@ -145,6 +150,13 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
                 binding.errorText.visibility = View.GONE
                 showAllViews()
             }
+        }
+    }
+
+    private fun handleAddButtonState(state: Boolean) {
+        binding.addButton.visibility = when (state) {
+            true -> View.VISIBLE
+            false -> View.GONE
         }
     }
 
@@ -180,7 +192,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     }
 
     private fun setAdapters() {
-        daysAdapter = ThreeDaysAdapter(resourceProvider!!)
+        daysAdapter = ThreeDaysAdapter(resourceProvider)
         binding.rv7DayForecast.adapter = daysAdapter
     }
 
@@ -191,17 +203,17 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     private fun updateColorBackground(state: BackgroundState) {
         binding.root.background = when (state) {
             BackgroundState.NIGHT ->
-                getDrawable("night_big_gradient", resourceProvider!!)
+                getDrawable("night_bottom_gradient", resourceProvider)
             BackgroundState.MORNING ->
-                getDrawable("morning_big_gradient", resourceProvider!!)
+                getDrawable("morning_bottom_gradient", resourceProvider)
             BackgroundState.NOON ->
-                getDrawable("noon_big_gradient", resourceProvider!!)
+                getDrawable("noon_bottom_gradient", resourceProvider)
             BackgroundState.EVENING ->
-                getDrawable("evening_big_gradient", resourceProvider!!)
+                getDrawable("evening_bottom_gradient", resourceProvider)
             BackgroundState.LIGHT_RAIN ->
-                getDrawable("light_rain_big_gradient", resourceProvider!!)
+                getDrawable("light_rain_bottom_gradient", resourceProvider)
             BackgroundState.HEAVY_RAIN ->
-                getDrawable("heavy_rain_big_gradient", resourceProvider!!)
+                getDrawable("heavy_rain_bottom_gradient", resourceProvider)
         }
     }
 
@@ -212,7 +224,6 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
             }
             LoadingState.READY -> {
                 binding.progressBar.visibility = View.GONE
-                binding.swipeRefreshLayout.isRefreshing = false
             }
         }
     }
@@ -266,7 +277,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     }
 
     private fun updateWeatherDaysForecast(forecast: List<WeatherOnDay>) {
-        daysAdapter?.submitList(forecast)
+        daysAdapter.submitList(forecast)
     }
 
     override fun setNetworkReceiver() {
@@ -280,21 +291,21 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     }
 
     override fun onNetworkChanged(status: Boolean) {
-        viewModel?.getWeatherForCity()
-    }
-
-    private fun fromJson(city: String?): SimpleWeatherForCity? {
-        return Gson().fromJson(city, SimpleWeatherForCity::class.java)
+        viewModel.getWeatherForCity(city)
     }
 
     private fun fromJson(city: String): DatabaseCity {
         return Gson().fromJson(city, DatabaseCity::class.java)
     }
 
-    companion object {
-        const val ARG_CITY_WEATHER = "city_weather"
-        const val ARG_CITY = "city"
+    private fun getWindowHeight(): Int {
+        // Calculate window height for fullscreen use
+        val displayMetrics = DisplayMetrics()
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return displayMetrics.heightPixels
     }
 
-
+    companion object {
+        const val ARG_CITY = "ARG_CITY"
+    }
 }

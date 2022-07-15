@@ -6,10 +6,14 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/delete.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-anydpi/location.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-xhdpi/evening_bottom_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable-xhdpi/heavy_rain_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/divider.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/evening_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/evening_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/evening_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/heavy_rain_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/heavy_rain_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/heavy_rain_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic100.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_100.xml" value="0.3335" />
@@ -20,14 +24,18 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic__01_fill.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/ic_sunny.xml" value="0.1605" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/light_rain_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/light_rain_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/light_rain_gradient.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/morning_ripple.xml" value="0.1605" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/night_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/night_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/night_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/night_shape.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/noon_big_gradient.xml" value="0.335" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/noon_bottom_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/noon_gradient.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/shape.xml" value="0.3335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/splash_screen.xml" value="0.2155" />
@@ -35,6 +43,7 @@
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/drawable/weather_sun.xml" value="0.335" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.3582427536231884" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.27151639344262296" />
+        <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/city_weather_bottom_sheet_layout.xml" value="0.31666666666666665" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_city_weather.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_list_of_cities.xml" value="0.33" />
         <entry key="..\:/Users/user/OneDrive/Desktop/desktop/WeatherApp/app/src/main/res/layout/fragment_search_cities.xml" value="0.33" />

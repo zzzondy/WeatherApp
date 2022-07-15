@@ -3,7 +3,6 @@ package com.weatherapp.fragments
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,9 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
 import com.jakewharton.rxbinding3.widget.textChanges
@@ -186,16 +183,11 @@ class SearchCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         originView: View,
         cityWeather: SimpleWeatherForCity?
     ) {
-        exitTransition = MaterialElevationScale(false)
-        reenterTransition = MaterialElevationScale(true)
-        val extras = FragmentNavigatorExtras(originView to "cityWeatherFragment")
-        Navigation.findNavController(originView).navigate(
-            R.id.cityWeatherFragment,
-            bundleOf(
-                CityWeatherFragment.ARG_FROM_SEARCH to true,
-                CityWeatherFragment.ARG_CITY to toJson(city)
-            ), null, extras
-        )
+        Navigation.findNavController(originView)
+            .navigate(
+                R.id.action_searchCitiesFragment_to_cityWeatherBottomSheetFragment,
+                bundleOf(CityWeatherBottomSheetFragment.ARG_CITY to toJson(city))
+            )
     }
 
     override fun onNetworkChanged(status: Boolean) {

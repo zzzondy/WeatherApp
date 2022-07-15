@@ -14,7 +14,6 @@ import com.weatherapp.models.entities.SimpleWeatherForCity
 import com.weatherapp.models.entities.WeatherOnDay
 import com.weatherapp.models.network.WeatherApiModule
 import com.weatherapp.providers.ResourceProvider
-import com.weatherapp.receivers.NetworkChangeListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -26,8 +25,6 @@ import java.util.*
 
 class CityWeatherViewModel(
     resourceProvider: ResourceProvider,
-    fromSearch: Boolean,
-    private val networkChangeListener: NetworkChangeListener,
     private val city: DatabaseCity,
     private val weatherForCity: SimpleWeatherForCity? = null,
 ) :
@@ -40,9 +37,6 @@ class CityWeatherViewModel(
     private val language = resourceProvider.language
 
     private val subscriptions = CompositeDisposable()
-
-    private val mutableAddButtonLiveData = MutableLiveData(false)
-    val addButtonLiveData: LiveData<Boolean> get() = mutableAddButtonLiveData
 
     private val mutableBackgroundLiveData = MutableLiveData<BackgroundState>()
     val backgroundLiveData: LiveData<BackgroundState> get() = mutableBackgroundLiveData
@@ -111,10 +105,6 @@ class CityWeatherViewModel(
         else {
             updateDataFromPassedWeather()
         }
-        if (fromSearch) {
-            cityWeatherRepository = CityWeatherRepository(resourceProvider.context)
-            checkCityAtDatabase()
-        }
     }
 
     fun getWeatherForCity(cityId: String = city.cityId) {
@@ -164,39 +154,8 @@ class CityWeatherViewModel(
                 onError = {
                     mutableLoadingLiveData.value = LoadingState.READY
                     mutableResultLiveData.value = ResultState.ERROR
-                    networkChangeListener.setNetworkReceiver()
                 })
             .addTo(subscriptions)
-    }
-
-    fun addCity() {
-        subscriptions.add(
-            cityWeatherRepository?.getNumberOfCities()
-                ?.subscribeOn(Schedulers.io())
-                ?.flatMap {
-                    cityWeatherRepository?.addNewCity(
-                        DatabaseCity(
-                            city.cityName,
-                            city.cityId,
-                            city.timezone,
-                            it
-                        )
-                    )
-                        ?.subscribeOn(Schedulers.io())
-                }
-                ?.subscribeBy()!!
-        )
-    }
-
-    private fun checkCityAtDatabase() {
-        cityWeatherRepository?.getCityById(city.cityId)
-            ?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribeBy(onSuccess = {
-                mutableAddButtonLiveData.value = false
-            },
-                onComplete = { mutableAddButtonLiveData.value = true }, onError = {})
-            ?.addTo(subscriptions)
     }
 
     private fun updateDataFromPassedWeather() {

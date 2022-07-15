@@ -10,7 +10,6 @@ import com.weatherapp.BuildConfig
 import com.weatherapp.database.CityWeatherRepository
 import com.weatherapp.fragments.states.BackgroundState
 import com.weatherapp.fragments.states.ListState
-import com.weatherapp.fragments.utils.getDrawable
 import com.weatherapp.fragments.utils.toSimpleCity
 import com.weatherapp.models.entities.DatabaseCity
 import com.weatherapp.models.entities.SimpleWeatherForCity

@@ -53,4 +53,5 @@
     <string name="dialog_negative_button">Cancel</string>
     <string name="location_city" translatable="false">Location city</string>
     <string name="no_access">This feature is not available without location permission</string>
+    <string name="cancel">Cancel</string>
 </resources>
