@@ -49,4 +49,6 @@
     <string name="dialog_positive_button">ОК</string>
     <string name="no_access">Эта функция неактивна без доступа к геолокации</string>
     <string name="cancel">Отменить</string>
+    <string name="share">Выберете приложение, чтобы поделиться</string>
+    <string name="noLocation">Невозможно определить геолокацию, пожалуйста, попробуйте позже</string>
 </resources>

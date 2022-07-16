@@ -54,4 +54,6 @@
     <string name="location_city" translatable="false">Location city</string>
     <string name="no_access">This feature is not available without location permission</string>
     <string name="cancel">Cancel</string>
+    <string name="share">Select app to share with</string>
+    <string name="noLocation">Unable to determine location, please, try again later</string>
 </resources>

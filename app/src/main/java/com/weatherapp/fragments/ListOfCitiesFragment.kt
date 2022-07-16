@@ -20,13 +20,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialSharedAxis
 import com.google.gson.Gson
@@ -314,7 +314,13 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
                     )
                 }
             }
-            else -> Log.println(Log.ASSERT, "error", locationResult.toString())
+            else -> {
+                binding.noLocation.visibility = View.VISIBLE
+                binding.constraintLayoutCurrentLocation.setOnClickListener {
+                    onLocationPermissionGranted()
+                }
+                hideAllViews()
+            }
         }
     }
 
@@ -357,6 +363,15 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
         binding.minTemp.visibility = View.VISIBLE
         binding.maxTemp.visibility = View.VISIBLE
         binding.noAccess.visibility = View.GONE
+        binding.noLocation.visibility = View.GONE
+    }
+
+    private fun hideAllViews() {
+        binding.nameCity.visibility = View.GONE
+        binding.weatherTextCity.visibility = View.GONE
+        binding.weatherTemp.visibility = View.GONE
+        binding.minTemp.visibility = View.GONE
+        binding.maxTemp.visibility = View.GONE
     }
 
     override fun openCityWeather(
@@ -428,7 +443,7 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
 
     private fun showLocationPermissionExplanationDialog() {
         context?.let {
-            AlertDialog.Builder(it)
+            MaterialAlertDialogBuilder(it)
                 .setMessage(R.string.permission_dialog_explanation_text)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
                     isRationaleShown = true
@@ -444,7 +459,7 @@ class ListOfCitiesFragment : Fragment(), CityWeatherListener, NetworkChangeListe
 
     private fun showLocationPermissionDeniedDialog() {
         context?.let {
-            AlertDialog.Builder(it)
+            MaterialAlertDialogBuilder(it)
                 .setMessage(R.string.permission_dialog_denied_text)
                 .setPositiveButton(R.string.dialog_positive_button) { dialog, _ ->
                     startActivity(

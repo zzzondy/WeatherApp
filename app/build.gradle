@@ -100,7 +100,9 @@ dependencies {
     implementation 'androidx.work:work-runtime-ktx:2.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
+    implementation 'com.google.android.gms:play-services-location:20.0.0' //you can use newer GMS version if you need
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

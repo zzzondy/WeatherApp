@@ -1,6 +1,7 @@
 package com.weatherapp.fragments
 
 import android.Manifest
+import android.location.Location
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LiveData
@@ -26,7 +27,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import java.util.*
-import kotlin.math.round
 
 class ListOfCitiesViewModel(
     private val resourceProvider: ResourceProvider,
@@ -38,6 +38,8 @@ class ListOfCitiesViewModel(
     private val weatherApiModule = WeatherApiModule.getInstance()
 
     private val language = resourceProvider.language
+
+    private var locationResult: Location? = null
 
     private val mutableListOfCitiesLiveData = MutableLiveData<List<DatabaseCity>>()
     val listOfCitiesLiveData: LiveData<List<DatabaseCity>> get() = mutableListOfCitiesLiveData
@@ -69,8 +71,7 @@ class ListOfCitiesViewModel(
                 else
                     mutableResultState.value = ListState.NOT_EMPTY
                 mutableListOfCitiesLiveData.value = listOfCities.sortedBy { it.idAtList }
-            },
-                onError = { Log.e("error", it.toString()) })
+            })
             .addTo(subscriptions)
     }
 
@@ -78,18 +79,17 @@ class ListOfCitiesViewModel(
         subscriptions.add(Single.fromCallable { cityWeatherRepository.deleteById(city.cityId) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { getCities() }, onError = { Log.e("error", it.toString()) }))
+            .subscribeBy(onSuccess = { getCities() }))
     }
 
     fun updatePosition(city: DatabaseCity, newIdAtList: Int) {
         subscriptions.add(
             Single.fromCallable { cityWeatherRepository.updateCity(city.cityId, newIdAtList) }
                 .subscribeOn(Schedulers.io())
-                .subscribeBy(onError = { Log.e("error", it.toString()) })
+                .subscribeBy()
         )
     }
 
-    @RequiresPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
     fun requestLocation() {
         val weatherFromLocation = getWeatherForLocationFromPref()
         if (weatherFromLocation != null) {
@@ -97,22 +97,25 @@ class ListOfCitiesViewModel(
             mutableLocationLiveData.value = GetUserLocationResult.Success(weatherFromLocation)
             return
         }
-        val lastLocation = locationProvider.requestLastKnownLocation()
-        if (lastLocation != null) {
-            lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
+        locationProvider.requestLocation()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { location ->
+                    locationResult = location
                     val longitude = Math.round(location.longitude * 100) / 100.0
                     val latitude = Math.round(location.latitude * 100) / 100.0
                     getWeatherForLocation("${longitude},${latitude}")
-                } else {
+                },
+                onError = {
                     mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
+                },
+                onComplete = {
+                    if (locationResult == null)
+                        mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
                 }
-            }.addOnFailureListener {
-                mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
-            }
-        } else {
-            mutableLocationLiveData.value = GetUserLocationResult.Failed.OtherFailure
-        }
+            )
+            .addTo(subscriptions)
+
     }
 
     @RequiresPermission(Manifest.permission.ACCESS_COARSE_LOCATION)

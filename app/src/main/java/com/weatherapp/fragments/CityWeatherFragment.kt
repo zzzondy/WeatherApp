@@ -1,5 +1,6 @@
 package com.weatherapp.fragments
 
+import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
@@ -34,6 +35,7 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     private var networkStateReceiver: NetworkStateReceiver? = null
 
     private val args: CityWeatherFragmentArgs by navArgs()
+    private lateinit var city: DatabaseCity
 
     private var _binding: FragmentCityWeatherBinding? = null
     private val binding: FragmentCityWeatherBinding get() = _binding!!
@@ -61,8 +63,8 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resourceProvider = ResourceProvider(requireContext())
-        val weatherForCity =  fromJson(args.weatherForCity)
-        val city = fromJson(args.city)
+        val weatherForCity = fromJson(args.weatherForCity)
+        city = fromJson(args.city)
         viewModel = if (weatherForCity != null) {
             CityWeatherViewModel(
                 resourceProvider!!,
@@ -105,6 +107,21 @@ class CityWeatherFragment : Fragment(), NetworkChangeListener {
             viewModel?.getWeatherForCity(
                 fromJson(requireArguments().getString(ARG_CITY)!!).cityId
             )
+        }
+
+        binding.openShareBottomSheet.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+                val shareMessage = "https://android.weatherapp.com/weather/${
+                    city.cityName.replace(
+                        " ",
+                        "_"
+                    )
+                }?${city.cityId}?${city.timezone}"
+                putExtra(Intent.EXTRA_TEXT, shareMessage)
+            }
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         }
     }
 
