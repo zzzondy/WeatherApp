@@ -1,4 +1,2 @@
-app/* linguist-documentation=false
-app/* linguist-vendored
 *.kt linguist-detectable=true
 *.xml linguist-detectable=true
