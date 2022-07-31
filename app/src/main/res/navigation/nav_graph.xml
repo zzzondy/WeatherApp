@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listOfCitiesFragment">
+
+    <fragment
+        android:id="@+id/cityWeatherFragment"
+        android:name="com.weatherapp.fragments.CityWeatherFragment"
+        android:label="cityWeatherFragment"
+        tools:layout="@layout/fragment_city_weather">
+        <argument
+            android:name="city"
+            app:argType="string" />
+        <argument
+            android:name="weatherForCity"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listOfCitiesFragment"
+        android:name="com.weatherapp.fragments.ListOfCitiesFragment"
+        android:label="listOfCitiesFragment"
+        tools:layout="@layout/fragment_list_of_cities">
+
+        <action
+            android:id="@+id/action_listOfCitiesFragment_to_searchCitiesFragment"
+            app:destination="@id/searchNavigation" />
+        <action
+            android:id="@+id/action_listOfCitiesFragment_to_cityWeatherFragment"
+            app:destination="@id/cityWeatherFragment" />
+    </fragment>
+
+    <navigation
+        android:id="@+id/searchNavigation"
+        android:label="searchStack"
+        app:startDestination="@id/searchCitiesFragment">
+        <dialog
+            android:id="@+id/cityWeatherBottomSheetFragment"
+            android:name="com.weatherapp.fragments.CityWeatherBottomSheetFragment"
+            android:label="CityWeatherBottomSheetFragment">
+            <deepLink app:uri="https://android.weatherapp.com/weather/{cityName}?{cityId}?{timezone}" />
+            <argument
+                android:name="cityName"
+                app:argType="string" />
+            <argument
+                android:name="cityId"
+                app:argType="string" />
+            <argument
+                android:name="timezone"
+                app:argType="string" />
+
+        </dialog>
+        <fragment
+            android:id="@+id/searchCitiesFragment"
+            android:name="com.weatherapp.fragments.SearchCitiesFragment"
+            android:label="searchOfCitiesFragment"
+            tools:layout="@layout/fragment_search_cities">
+            <action
+                android:id="@+id/action_searchCitiesFragment_to_cityWeatherBottomSheetFragment"
+                app:destination="@id/cityWeatherBottomSheetFragment" />
+        </fragment>
+    </navigation>
+
+
+</navigation>
